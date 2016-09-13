@@ -10,6 +10,29 @@
 
 namespace bs {
 
+//
+// @inproceedings{Calderara:2006:RBS:1178782.1178814,
+//  author = {Calderara, Simone and Melli, Rudy and Prati, Andrea and Cucchiara,
+//  Rita},
+//  title = {Reliable Background Suppression for Complex Scenes},
+//  booktitle = {Proceedings of the 4th ACM International Workshop on Video
+//  Surveillance and Sensor Networks},
+//  series = {VSSN '06},
+//  year = {2006},
+//  isbn = {1-59593-496-0},
+//  location = {Santa Barbara, California, USA},
+//  pages = {211--214},
+//  numpages = {4},
+//  url = {http://doi.acm.org/10.1145/1178782.1178814},
+//  doi = {10.1145/1178782.1178814},
+//  acmid = {1178814},
+//  publisher = {ACM},
+//  address = {New York, NY, USA},
+//  keywords = {background suppression, people detection and tracking, shadow
+//  detection},
+// }
+//
+
 struct temporal_median_bootstrap {
     explicit temporal_median_bootstrap (
         size_t block_size = 16,

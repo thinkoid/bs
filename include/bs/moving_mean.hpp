@@ -1,6 +1,7 @@
 #ifndef BS_MOVING_MEAN_HPP
 #define BS_MOVING_MEAN_HPP
 
+#include <bs/defs.hpp>
 #include <opencv2/core/mat.hpp>
 
 namespace bs {

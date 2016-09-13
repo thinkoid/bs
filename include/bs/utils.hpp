@@ -1,6 +1,7 @@
 #ifndef BS_COMMON_HPP
 #define BS_COMMON_HPP
 
+#include <bs/defs.hpp>
 #include <opencv2/imgproc.hpp>
 
 namespace bs {

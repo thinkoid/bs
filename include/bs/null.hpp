@@ -1,6 +1,7 @@
 #ifndef BS_NULL_HPP
 #define BS_NULL_HPP
 
+#include <bs/defs.hpp>
 #include <opencv2/core/mat.hpp>
 
 namespace bs {

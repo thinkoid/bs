@@ -1,6 +1,7 @@
 #ifndef BS_ADAPTIVE_MEDIAN_HPP
 #define BS_ADAPTIVE_MEDIAN_HPP
 
+#include <bs/defs.hpp>
 #include <opencv2/core/mat.hpp>
 
 namespace bs {

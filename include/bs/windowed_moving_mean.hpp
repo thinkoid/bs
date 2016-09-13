@@ -1,11 +1,12 @@
 #ifndef BS_WINDOWED_MOVING_MEAN_HPP
 #define BS_WINDOWED_MOVING_MEAN_HPP
 
-#include <vector>
-
-#include <boost/circular_buffer.hpp>
+#include <bs/defs.hpp>
 
 #include <opencv2/core/mat.hpp>
+#include <boost/circular_buffer.hpp>
+
+#include <vector>
 
 namespace bs {
 

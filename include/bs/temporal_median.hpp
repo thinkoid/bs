@@ -1,11 +1,12 @@
 #ifndef BS_TEMPORAL_MEDIAN_HPP
 #define BS_TEMPORAL_MEDIAN_HPP
 
-#include <vector>
-
-#include <boost/circular_buffer.hpp>
+#include <bs/defs.hpp>
 
 #include <opencv2/core/mat.hpp>
+#include <boost/circular_buffer.hpp>
+
+#include <vector>
 
 namespace bs {
 

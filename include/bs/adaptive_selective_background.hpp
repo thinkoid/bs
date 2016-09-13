@@ -1,6 +1,7 @@
 #ifndef BS_ADAPTIVE_SELECTIVE_BACKGROUND_HPP
 #define BS_ADAPTIVE_SELECTIVE_BACKGROUND_HPP
 
+#include <bs/defs.hpp>
 #include <opencv2/core/mat.hpp>
 
 namespace bs {

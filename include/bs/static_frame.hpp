@@ -1,6 +1,7 @@
 #ifndef BS_STATIC_FRAME_HPP
 #define BS_STATIC_FRAME_HPP
 
+#include <bs/defs.hpp>
 #include <opencv2/core/mat.hpp>
 
 namespace bs {

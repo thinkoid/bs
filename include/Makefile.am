@@ -7,6 +7,7 @@ nobase_include_HEADERS =                        \
   bs/moving_mean.hpp                            \
   bs/moving_variance.hpp                        \
   bs/previous_frame.hpp                         \
+  bs/sigma_delta.hpp                            \
   bs/static_frame.hpp                           \
   bs/temporal_median.hpp                        \
   bs/windowed_moving_mean.hpp                   \

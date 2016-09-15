@@ -42,6 +42,7 @@ namespace fs = boost::filesystem;
 #include <bs/moving_variance.hpp>
 #include <bs/previous_frame.hpp>
 #include <bs/static_frame.hpp>
+#include <bs/sigma_delta.hpp>
 #include <bs/temporal_median.hpp>
 #include <bs/windowed_moving_mean.hpp>
 #include <bs/null.hpp>
@@ -203,6 +204,32 @@ process_static_frame_difference (
 
         if (display)
             imshow ("Static frame difference", mask);
+
+        if (frame_delay.wait_for_key (27))
+            break;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+
+static void
+process_sigma_delta (
+    cv::VideoCapture& cap, const bs::options_t& opts) {
+
+    cv::Mat background = scale_frame (*getframes_from (cap).begin ());
+    bs::sigma_delta subtractor (
+        background,
+        opts ["threshold"].as< int > ());
+
+    const bool display = opts.have ("display");
+
+    for (auto& frame : getframes_from (cap)) {
+        frame_delay_t frame_delay { 40 };
+
+        auto mask = subtractor (scale_frame (frame));
+
+        if (display)
+            imshow ("Sigma-delta difference", mask);
 
         if (frame_delay.wait_for_key (27))
             break;
@@ -421,6 +448,9 @@ run_from_stream (cv::VideoCapture& cap, const bs::options_t& opts) {
 
     if (algorithm == "static-frame-difference") {
         process_static_frame_difference (cap, opts);
+    }
+    else if (algorithm == "sigma-delta") {
+        process_sigma_delta (cap, opts);
     }
     else if (algorithm == "frame-difference") {
         process_frame_difference (cap, opts);

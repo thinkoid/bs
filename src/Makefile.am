@@ -13,6 +13,7 @@ libbs_la_SOURCES =                              \
   previous_frame.cpp                            \
   moving_mean.cpp                               \
   moving_variance.cpp                           \
+  sigma_delta.cpp                               \
   static_frame.cpp                              \
   temporal_median.cpp                           \
   windowed_moving_mean.cpp

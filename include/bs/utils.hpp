@@ -10,16 +10,24 @@ const int BACKGROUND = 0;
 const int FOREGROUND = 255;
 
 inline cv::Mat
-float_from (
-    const cv::Mat& frame, double scale = 1. / 255, double offset = 0) {
-    cv::Mat dst;
-    return frame.convertTo (dst, CV_32F, scale, offset), dst;
+convert (cv::Mat src, int t, double a = 1, double b = 0) {
+    return src.convertTo (src, t, a, b), src;
 }
 
 inline cv::Mat
-mono_from (const cv::Mat& frame, double scale = 255, double offset = 0) {
-    cv::Mat dst;
-    return frame.convertTo (dst, CV_8U, scale, offset), dst;
+float_from (
+    const cv::Mat& src, double scale = 1. / 255, double offset = 0.) {
+    return convert (src, CV_32F, scale, offset);
+}
+
+inline cv::Mat
+mono_from (const cv::Mat& src, double scale = 255., double offset = 0.) {
+    return convert (src, CV_8U, scale, offset);
+}
+
+inline cv::Mat
+mono_integral_from (cv::Mat src, double scale = 1., double offset = 0.) {
+    return convert (src, CV_32S, scale, offset);
 }
 
 inline cv::Mat
@@ -100,11 +108,6 @@ bitwise_not (cv::Mat src) {
 inline cv::Mat
 bitwise_not (cv::Mat src, const cv::Mat& mask) {
     return cv::bitwise_not (src, src, mask), src;
-}
-
-inline cv::Mat
-convert (cv::Mat src, int t, double a = 1, double b = 0) {
-    return src.convertTo (src, t, a, b), src;
 }
 
 inline cv::Mat

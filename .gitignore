@@ -1,8 +1,10 @@
 *.a
 *.la
 *.lo
+*.log
 *.msi
 *.o
+*.trs
 *~
 .Tpo
 .deps
@@ -26,6 +28,7 @@ config.sub
 configure
 depcomp
 depot
+examples/bs
 install-sh
 libtool
 libtool.m4
@@ -36,5 +39,6 @@ ltversion.m4
 lt~obsolete.m4
 megafile
 missing
-examples/bs
 stamp-h1
+test-driver
+tests/threshold

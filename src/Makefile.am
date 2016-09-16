@@ -16,5 +16,6 @@ libbs_la_SOURCES =                              \
   sigma_delta.cpp                               \
   static_frame.cpp                              \
   temporal_median.cpp                           \
+  utils.cpp                                     \
   windowed_moving_mean.cpp
   

@@ -10,7 +10,7 @@
 #define BS_CHECK  BOOST_CHECK
 #define BS_VERIFY BOOST_VERIFY
 
-#define BS_ASSERT(x) assert (x)
+#define BS_ASSERT(x) BOOST_ASSERT (x)
 #define BS_UNUSED(x) ((void)x)
 
 namespace bs { }

@@ -16,3 +16,6 @@ check_PROGRAMS = threshold
 
 threshold_SOURCES = threshold.cpp
 threshold_LDADD = $(LIBS)
+
+bin_PROGRAMS = lbp_perf
+lbp_perf_SOURCES = lbp_perf.cpp

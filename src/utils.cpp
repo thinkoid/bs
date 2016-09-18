@@ -1,5 +1,7 @@
 #include <bs/utils.hpp>
+
 #include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 
 namespace bs {
 namespace detail {
@@ -155,6 +157,20 @@ threshold (const cv::Mat& src, T threshold_, T value, int type) {
     }
 }
 
+inline cv::Mat
+scale_frame (cv::Mat& frame, double factor) {
+    cv::Mat bw;
+    cv::cvtColor (frame, bw, cv::COLOR_BGR2GRAY);
+
+    cv::Mat tiny;
+    cv::resize (bw, tiny, cv::Size (), factor, factor, cv::INTER_LINEAR);
+
+    // this adds a lot of noise in dark images
+    // cv::equalizeHist (tiny, tiny);
+
+    return tiny;
+}
+
 } // namespace detail
 
 cv::Mat
@@ -298,6 +314,32 @@ chebyshev (const cv::Vec3b& lhs, const cv::Vec3b& rhs) {
     };
 
     return (std::max)({ tmp [0], tmp [1], tmp [2] });
+}
+
+cv::Mat
+scale_frame (cv::Mat& src, size_t to) {
+    const double scale_factor = double (to) / src.cols;
+    return detail::scale_frame (src, scale_factor);
+}
+
+frame_delay::frame_delay (size_t value)
+    : value_ (value),
+      begin_ (std::chrono::high_resolution_clock::now ())
+{ }
+
+bool
+frame_delay::wait_for_key (int key) const {
+    using namespace std::chrono;
+
+    int passed = duration_cast< milliseconds > (
+        high_resolution_clock::now () - begin_).count ();
+
+    int remaining = value_ - passed;
+
+    if (remaining < 1)
+        remaining = 1;
+
+    return key == cv::waitKey (remaining);
 }
 
 } // namespace bs

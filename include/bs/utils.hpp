@@ -73,6 +73,18 @@ flip (const cv::Mat&, int how = 0);
 int
 chebyshev (const cv::Vec3b&, const cv::Vec3b&);
 
+cv::Mat
+scale_frame (cv::Mat&, size_t to = 512);
+
+struct frame_delay {
+    explicit frame_delay (size_t value = 40 /* milliseconds */);
+    bool wait_for_key (int key) const;
+
+private:
+    int value_;
+    std::chrono::high_resolution_clock::time_point begin_;
+};
+
 } // namespace bs
 
 #endif // BS_COMMON_HPP

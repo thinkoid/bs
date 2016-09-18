@@ -1,7 +1,13 @@
 #ifndef BS_FRAME_RANGE_HPP
 #define BS_FRAME_RANGE_HPP
 
+#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
+
+// #include <boost/iterator_adaptors.hpp>
+#include <boost/range/iterator_range.hpp>
+
+namespace bs {
 
 struct frames_iterator : boost::iterator_facade <
     frames_iterator, cv::Mat, std::forward_iterator_tag > {
@@ -53,5 +59,7 @@ static inline frames_range
 getframes_from (cv::VideoCapture& vc) {
     return frames_range { vc };
 }
+
+} // namespace bs
 
 #endif // BS_FRAME_RANGE_HPP

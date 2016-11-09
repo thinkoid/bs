@@ -4,6 +4,8 @@
 #include <bs/defs.hpp>
 #include <opencv2/imgproc.hpp>
 
+#include <chrono>
+
 namespace bs {
 
 const int BACKGROUND = 0;

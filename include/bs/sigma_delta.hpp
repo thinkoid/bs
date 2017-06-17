@@ -28,9 +28,18 @@ namespace bs {
 //  keywords = {Background estimation, Motion detection, Recursive filtering},
 // }
 //
+// @inproceedings{lacassagne2009motion,
+//   title={Motion detection: Fast and robust algorithms for embedded systems},
+//   author={Lacassagne, Lionel and Manzanera, Antoine and Dupret, Antoine},
+//   booktitle={Image Processing (ICIP), 2009 16th IEEE International Conference on},
+//   pages={3265--3268},
+//   year={2009},
+//   organization={IEEE}
+// }
 
 struct sigma_delta {
-    explicit sigma_delta (const cv::Mat&, int = 4, int = 25);
+    explicit sigma_delta (
+        const cv::Mat&, size_t = 2, size_t = 2, size_t = 255);
 
 public:
     const cv::Mat&
@@ -42,8 +51,8 @@ public:
     }
 
 private:
-    cv::Mat mask_, m_, d_, v_;
-    int n_, threshold_;
+    cv::Mat mask_, m_, d_, v_, q_;
+    size_t n_, Vmin_, Vmax_;
 };
 
 }

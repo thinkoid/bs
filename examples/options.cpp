@@ -63,16 +63,18 @@ options_t::options_t (int argc, char** argv) {
 
         ("lambda", po::value< double > ()->default_value (7.),
          "lambda parameter (meaning depends on the algorithm, "
-         "usually a multiplier)")
+         "usually a multiplier, e.g., sigma-delta, etc.)")
 
         ("history-size", po::value< size_t > ()->default_value (9),
          "length of historical frame buffer")
 
-        ("lo", po::value< size_t > ()->default_value (2),
-         "distance from median for low threshold")
+        ("lo", po::value< size_t > (),
+         "distance from median for low threshold(2), "
+         "min variance in sigma-delta(2), etc.")
 
-        ("hi", po::value< size_t > ()->default_value (4),
-         "distance from median for high threshold")
+        ("hi", po::value< size_t > (),
+         "distance from median for high threshold (4), "
+         "max variance in sigma-delta(255), etc.")
 
         ("fps", po::value< int > ()->default_value (25),
          "fps (meaning depends on the algorithm)")

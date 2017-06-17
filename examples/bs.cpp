@@ -149,13 +149,14 @@ process_static_frame_difference (
 ////////////////////////////////////////////////////////////////////////
 
 static void
-process_sigma_delta (
-    cv::VideoCapture& cap, const bs::options_t& opts) {
-
+process_sigma_delta (cv::VideoCapture& cap, const bs::options_t& opts) {
     cv::Mat background = bs::scale_frame (*bs::getframes_from (cap).begin ());
+
     bs::sigma_delta subtractor (
         background,
-        opts ["threshold"].as< int > ());
+        opts ["lambda"].as< double > (),
+        opts ["lo" ].as< size_t > (),
+        opts ["hi" ].as< size_t > ());
 
     const bool display = opts.have ("display");
 

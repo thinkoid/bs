@@ -529,7 +529,7 @@ OPENCV_DEFUN([Imgproc],
    m4_pattern_allow([^OPENCV_IMGPROC_(LIBS|LDFLAGS)$])dnl
    LIBS="$LIBS $OPENCV_IMGPROC_LIBS"
    LDFLAGS="$LDFLAGS $OPENCV_IMGPROC_LDFLAGS"
-   OPENCV_FIND_LIB([imgproc], [$1], [opencv2/imgproc.hpp], [return !&cv::Canny;])
+   OPENCV_FIND_LIB([imgproc], [$1], [opencv2/imgproc.hpp], [return !&cv::Sobel;])
    LIBS=$opencv_imgproc_save_LIBS
    LDFLAGS=$opencv_imgproc_save_LDFLAGS
 ])# OPENCV_IMGPROC

@@ -1,5 +1,7 @@
+#include <cassert>
+
 #include <bs/utils.hpp>
-#include <bs/moving_variance.hpp>
+#include <bs/windowed_variance.hpp>
 
 #include <opencv2/imgproc.hpp>
 
@@ -22,13 +24,14 @@ weighted_variance_of (
 ////////////////////////////////////////////////////////////////////////
 
 /* explicit */
-moving_variance::moving_variance (
-    std::vector< double > weights, int threshold)
-    : framebuf_ (3), weights_ (weights), threshold_ (threshold)
-{ }
+windowed_variance::windowed_variance (
+    std::vector< double > weights, size_t threshold)
+    : framebuf_ (3), weights_ (weights), threshold_ (threshold) {
+    assert (weights_.size () == 3);
+}
 
 const cv::Mat&
-moving_variance::operator() (const cv::Mat& frame) {
+windowed_variance::operator() (const cv::Mat& frame) {
     framebuf_.push_back (float_from (frame));
 
     if (framebuf_.size () < 3)

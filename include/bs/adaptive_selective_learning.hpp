@@ -1,13 +1,13 @@
-#ifndef BS_STATIC_FRAME_HPP
-#define BS_STATIC_FRAME_HPP
+#ifndef BS_ADAPTIVE_SELECTIVE_LEARNING_HPP
+#define BS_ADAPTIVE_SELECTIVE_LEARNING_HPP
 
 #include <bs/defs.hpp>
 #include <opencv2/core/mat.hpp>
 
 namespace bs {
 
-struct static_frame {
-    explicit static_frame (const cv::Mat&, size_t);
+struct adaptive_selective_learning {
+    explicit adaptive_selective_learning (const cv::Mat&, double, size_t);
 
 public:
     const cv::Mat&
@@ -20,9 +20,11 @@ public:
 
 private:
     cv::Mat background_, mask_;
+
+    double alpha_;
     size_t threshold_;
 };
 
 }
 
-#endif // BS_STATIC_FRAME_HPP
+#endif // BS_ADAPTIVE_SELECTIVE_LEARNING_HPP

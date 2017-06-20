@@ -1,19 +1,19 @@
 #include <bs/utils.hpp>
-#include <bs/adaptive_selective_background.hpp>
+#include <bs/adaptive_selective_learning.hpp>
 
 #include <opencv2/imgproc.hpp>
 
 namespace bs {
 
 /* explicit */
-adaptive_selective_background::adaptive_selective_background (
-    const cv::Mat& background, double alpha, int threshold)
+adaptive_selective_learning::adaptive_selective_learning (
+    const cv::Mat& background, double alpha, size_t threshold)
     : background_ (background), mask_ (background.size (), CV_8U),
       alpha_ (alpha), threshold_ (threshold)
 { }
 
 const cv::Mat&
-adaptive_selective_background::operator() (const cv::Mat& frame) {
+adaptive_selective_learning::operator() (const cv::Mat& frame) {
     cv::Mat diff = absdiff (frame, background_);
 
     cv::Mat foreground_mask = threshold (

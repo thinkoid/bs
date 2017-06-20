@@ -23,7 +23,7 @@ namespace bs {
 //
 
 struct adaptive_median {
-    explicit adaptive_median (const cv::Mat&, size_t, int);
+    explicit adaptive_median (const cv::Mat&, size_t, size_t);
 
 public:
     const cv::Mat&
@@ -36,8 +36,7 @@ public:
 
 private:
     cv::Mat background_, mask_;
-    size_t frame_interval_, frame_counter_;
-    int threshold_;
+    size_t frame_interval_, frame_counter_, threshold_;
 };
 
 }

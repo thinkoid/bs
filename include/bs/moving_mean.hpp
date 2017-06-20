@@ -7,7 +7,7 @@
 namespace bs {
 
 struct moving_mean {
-    explicit moving_mean (const cv::Mat&, double, int);
+    explicit moving_mean (const cv::Mat&, double, size_t);
 
 public:
     const cv::Mat&
@@ -21,7 +21,7 @@ public:
 private:
     cv::Mat mean_, mask_;
     double alpha_;
-    int threshold_;
+    size_t threshold_;
 };
 
 }

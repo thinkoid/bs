@@ -1,22 +1,22 @@
 #include <bs/utils.hpp>
-#include <bs/adaptive_background.hpp>
+#include <bs/adaptive_learning.hpp>
 
 #include <opencv2/imgproc.hpp>
 
 namespace bs {
 
 /* explicit */
-adaptive_background::adaptive_background (
-    const cv::Mat& background, double alpha, int threshold)
+adaptive_learning::adaptive_learning (
+    const cv::Mat& background, double alpha, size_t threshold)
     : background_ (background), alpha_ (alpha), threshold_ (threshold)
 { }
 
 const cv::Mat&
-adaptive_background::operator() (const cv::Mat& frame) {
+adaptive_learning::operator() (const cv::Mat& frame) {
     cv::Mat diff = absdiff (frame, background_);
 
     //
-    // Continuously integrate the incoming frames into the background:
+    // Unlimited integration of the incoming frames into the background:
     //
     background_ = alpha_ * frame + (1 - alpha_) * background_;
 

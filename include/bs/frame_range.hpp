@@ -4,7 +4,6 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-// #include <boost/iterator_adaptors.hpp>
 #include <boost/range/iterator_range.hpp>
 
 namespace bs {

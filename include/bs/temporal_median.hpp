@@ -38,8 +38,8 @@ struct temporal_median_bootstrap {
         size_t block_size = 16,
         size_t threshold = 15,
         size_t threshold_increment = 15,
-        size_t motionhreshold = 5,
-        size_t stablehreshold = 10,
+        size_t motionthreshold = 5,
+        size_t stablethreshold = 10,
         size_t thrash_limit = 2);
 
     bool operator() (const cv::Mat& frame) {
@@ -62,10 +62,11 @@ private:
 
     struct block {
         size_t x, y, w, h;
-        size_t updates, motionhreshold;
+        size_t updates, motionthreshold;
         bool stable;
     };
 
+private:
     cv::Mat background_;
 
     boost::circular_buffer< cv::Mat > framebuf_;
@@ -74,14 +75,15 @@ private:
 
     size_t block_size_;
     size_t threshold_, threshold_increment_;
-    size_t motionhreshold_, stablehreshold_;
+    size_t motionthreshold_, stablethreshold_;
     size_t thrashed_frames_, thrash_limit_;
     int init_, complete_;
 };
 
 struct temporal_median {
     explicit temporal_median (
-        const cv::Mat&, double = 7, size_t = 9, size_t = 2, size_t = 4);
+        const cv::Mat&, size_t = 9, size_t = 16, double = 7,
+        size_t = 2, size_t = 4);
 
     const cv::Mat&
     operator() (const cv::Mat&);
@@ -99,15 +101,14 @@ private:
     calculate_masks () const;
 
     cv::Mat
-    combine_masks (const cv::Mat&, const cv::Mat&, size_t = 255);
+    compose_masks (const cv::Mat&, const cv::Mat&, size_t = 255);
 
 private:
     cv::Mat background_, mask_;
-
     boost::circular_buffer< cv::Mat > history_;
 
     double lambda_;
-    size_t lo_, hi_, history_size_, history_pos_, frame_counter_;
+    size_t lo_, hi_, frame_interval_, frame_counter_;
 };
 
 } // namespace bs

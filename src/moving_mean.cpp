@@ -6,8 +6,7 @@
 namespace bs {
 
 /* explicit */
-moving_mean::moving_mean (
-    const cv::Mat& first, double alpha, int threshold)
+moving_mean::moving_mean (const cv::Mat& first, double alpha, size_t threshold)
     : mean_ (float_from (first)),
       mask_ (first.size (), CV_8U),
       alpha_ (alpha), threshold_ (threshold) {
@@ -17,12 +16,10 @@ const cv::Mat&
 moving_mean::operator() (const cv::Mat& frame) {
     cv::Mat fframe = float_from (frame);
 
-    cv::Mat dist = power_of (absdiff (fframe, mean_), 2);
-    mean_ = alpha_ * mean_ + (1. - alpha_) * fframe;
+    cv::Mat var = power_of (fframe - mean_, 2);
+    mean_ = alpha_ * fframe + (1. - alpha_) * mean_;
 
-    mask_ = threshold (absdiff (frame, mono_from (mean_)), threshold_);
-
-    return mask_;
+    return mask_ = threshold (mono_from (var), threshold_);
 }
 
 }

@@ -1,5 +1,5 @@
-#ifndef BS_MOVING_VARIANCE_HPP
-#define BS_MOVING_VARIANCE_HPP
+#ifndef BS_WINDOWED_VARIANCE_HPP
+#define BS_WINDOWED_VARIANCE_HPP
 
 #include <bs/defs.hpp>
 
@@ -10,8 +10,8 @@
 
 namespace bs {
 
-struct moving_variance {
-    explicit moving_variance (std::vector< double >, int);
+struct windowed_variance {
+    explicit windowed_variance (std::vector< double >, size_t);
 
 public:
     const cv::Mat&
@@ -26,9 +26,9 @@ private:
     cv::Mat mask_;
     boost::circular_buffer< cv::Mat > framebuf_;
     std::vector< double > weights_;
-    int threshold_;
+    size_t threshold_;
 };
 
 }
 
-#endif // BS_MOVING_VARIANCE_HPP
+#endif // BS_WINDOWED_VARIANCE_HPP

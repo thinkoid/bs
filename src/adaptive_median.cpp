@@ -7,7 +7,7 @@ namespace bs {
 
 /* explicit */
 adaptive_median::adaptive_median (
-    const cv::Mat& background, size_t frame_interval, int threshold)
+    const cv::Mat& background, size_t frame_interval, size_t threshold)
     : background_ (background), mask_ (),
       frame_interval_ (frame_interval), frame_counter_ (),
       threshold_ (threshold) {
@@ -48,8 +48,7 @@ adaptive_median::operator() (const cv::Mat& frame) {
         cv::Mat add_mask = threshold (frame - background_, 0, 1);
         cv::Mat sub_mask = threshold (background_ - frame, 0, 1);
 
-        background_ += add_mask;
-        background_ -= sub_mask;
+        background_ = background_ + add_mask - sub_mask;
     }
 
     return mask_;

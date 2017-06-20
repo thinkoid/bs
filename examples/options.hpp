@@ -6,8 +6,6 @@
 #include <boost/program_options.hpp>
 #include <boost/program_options/variables_map.hpp>
 
-namespace bs {
-
 struct options_t {
     typedef boost::program_options::variable_value value_type;
 
@@ -48,8 +46,6 @@ have_global_option (const char* s) {
 inline bool
 have_global_option (const std::string& s) {
     return have_global_option (s.c_str ());
-}
-
 }
 
 #endif // BS_OPTIONS_HPP

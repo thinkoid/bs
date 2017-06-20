@@ -6,8 +6,8 @@
 
 namespace bs {
 
-struct previous_frame {
-    explicit previous_frame (const cv::Mat&, int);
+struct simple_frame {
+    explicit simple_frame (const cv::Mat&, size_t);
 
 public:
     const cv::Mat&
@@ -23,7 +23,7 @@ private:
 
 private:
     cv::Mat background_, mask_;
-    int threshold_;
+    size_t threshold_;
 };
 
 }

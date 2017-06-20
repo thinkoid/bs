@@ -7,7 +7,7 @@ namespace bs {
 
 /* explicit */
 static_frame::static_frame (
-    const cv::Mat& background, int threshold /* = 15 */)
+    const cv::Mat& background, size_t threshold /* = 15 */)
     : background_ (background), threshold_ (threshold)
 { }
 

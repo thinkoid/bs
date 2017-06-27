@@ -16,7 +16,7 @@ LBP (const Mat& src)
     // Ojala, 2001 - A Generalized Local Binary Pattern Operator ...
     // Note: does not compute the uniformity measure U.
     //
-    auto dst = Mat::zeros (src.size (), CV_32F);
+    auto dst = Mat (src.size (), CV_32F, Scalar (0));
 
     for (size_t i = 1; i < size_t (src.rows) - 1; i++) {
         const float* p = src.ptr< float > (i - 1);

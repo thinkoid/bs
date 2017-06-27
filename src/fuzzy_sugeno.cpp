@@ -9,14 +9,14 @@ using namespace cv;
 
 namespace {
 
-static Mat
+Mat
 LBP (const Mat& src)
 {
     //
     // Ojala, 2001 - A Generalized Local Binary Pattern Operator ...
     // Note: does not compute the uniformity measure U.
     //
-    Mat dst (src.size (), CV_32F);
+    auto dst = Mat::zeros (src.size (), CV_32F);
 
     for (size_t i = 1; i < size_t (src.rows) - 1; i++) {
         const float* p = src.ptr< float > (i - 1);
@@ -39,6 +39,7 @@ LBP (const Mat& src)
                 (unsigned (r [1] >= t) << 2) +
                 (unsigned (r [2] >= t) << 3);
 
+            assert (tmp >= 0.);
             s [0] = tmp / 255.;
         }
     }
@@ -46,13 +47,13 @@ LBP (const Mat& src)
     return dst;
 }
 
-static inline float
+inline float
 h_texture (float lhs, float rhs)
 {
     return lhs < rhs ? lhs / rhs : lhs > rhs ? rhs / lhs : 1.0;
 }
 
-static inline Vec3f
+inline Vec3f
 h_texture (const Vec3f& lhs, const Vec3f& rhs)
 {
     Vec3f result;
@@ -68,7 +69,7 @@ h_texture (const Vec3f& lhs, const Vec3f& rhs)
     return result;
 }
 
-static Mat
+Mat
 similarity1 (const Mat& fg, const Mat& bg)
 {
     Mat d = Mat (fg.size (), CV_32F, Scalar (0));
@@ -80,7 +81,7 @@ similarity1 (const Mat& fg, const Mat& bg)
     return d;
 }
 
-static Mat
+Mat
 similarity3 (const Mat& fg, const Mat& bg)
 {
     Mat d = Mat (fg.size (), CV_32FC3, Scalar (0));
@@ -92,7 +93,7 @@ similarity3 (const Mat& fg, const Mat& bg)
     return d;
 }
 
-static Mat
+Mat
 similarity_of (const Mat& fg, const Mat& bg)
 {
     //
@@ -111,7 +112,7 @@ similarity_of (const Mat& fg, const Mat& bg)
     }
 }
 
-static Mat
+Mat
 sugeno_integral (const Mat& H, const Mat& I, const vector< double >& g)
 {
     double h_x [3], s [3];
@@ -171,7 +172,7 @@ sugeno_integral (const Mat& H, const Mat& I, const vector< double >& g)
     return S;
 }
 
-static Mat
+Mat
 update_background (const Mat& fg, const Mat& bg, const Mat& S, float alpha)
 {
     Mat result (fg.size (), CV_32FC3, Scalar (0));

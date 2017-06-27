@@ -28,10 +28,9 @@ lbp (const cv::Mat& src) {
         4, 5, 9, 6, 9, 9, 9, 7, 5, 6, 9, 7, 6, 7, 7, 8
     };
 
-    cv::Mat dst = cv::Mat::zeros (src.size (), CV_8U);
+    auto dst = cv::Mat (src.size (), src.type (), cv::Scalar (0));
 
-    for (int i = 1; i < src.rows - 1; i++) {
-
+    for (int i = 1; i < src.rows - 1; ++i) {
         const T* p = src.ptr< T > (i - 1);
         const T* q = src.ptr< T > (i);
         const T* r = src.ptr< T > (i + 1);
@@ -42,7 +41,7 @@ lbp (const cv::Mat& src) {
         for (int j = 1; j < src.cols - 1; ++j, ++p, ++q, ++r, ++s) {
             T t = q [1];
 
-            unsigned char tmp =
+            unsigned u =
                 ((p [0] >= t) << 7) +
                 ((p [1] >= t) << 6) +
                 ((p [2] >= t) << 5) +
@@ -52,7 +51,8 @@ lbp (const cv::Mat& src) {
                 ((r [1] >= t) << 2) +
                 ((r [2] >= t) << 3);
 
-            s [0] = arr [tmp];
+            BOOST_ASSERT (u < sizeof arr / sizeof *arr);
+            s [0] = arr [u];
         }
     }
 

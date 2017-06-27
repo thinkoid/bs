@@ -1,5 +1,6 @@
-#include <bs/utils.hpp>
 #include <bs/fuzzy_sugeno.hpp>
+#include <bs/lbp.hpp>
+#include <bs/utils.hpp>
 
 #include <algorithm>
 using namespace std;
@@ -8,44 +9,6 @@ using namespace std;
 using namespace cv;
 
 namespace {
-
-Mat
-LBP (const Mat& src)
-{
-    //
-    // Ojala, 2001 - A Generalized Local Binary Pattern Operator ...
-    // Note: does not compute the uniformity measure U.
-    //
-    auto dst = Mat (src.size (), CV_32F, Scalar (0));
-
-    for (size_t i = 1; i < size_t (src.rows) - 1; i++) {
-        const float* p = src.ptr< float > (i - 1);
-        const float* q = src.ptr< float > (i);
-        const float* r = src.ptr< float > (i + 1);
-
-        float* s = dst.ptr< float > (i);
-        ++s;
-
-        for (size_t j = 1; j < size_t (src.cols) - 1; ++j, ++p, ++q, ++r, ++s) {
-            float t = q [1];
-
-            const auto tmp =
-                (unsigned (p [0] >= t) << 7) +
-                (unsigned (p [1] >= t) << 6) +
-                (unsigned (p [2] >= t) << 5) +
-                (unsigned (q [0] >= t)) +
-                (unsigned (q [2] >= t) << 4) +
-                (unsigned (r [0] >= t) << 1) +
-                (unsigned (r [1] >= t) << 2) +
-                (unsigned (r [2] >= t) << 3);
-
-            assert (tmp >= 0.);
-            s [0] = tmp / 255.;
-        }
-    }
-
-    return dst;
-}
 
 inline float
 h_texture (float lhs, float rhs)
@@ -257,8 +220,8 @@ fuzzy_sugeno::operator() (const cv::Mat& frame) {
     Mat fframe (frame.size (), CV_32F);
     frame.convertTo (fframe, CV_32F, 1. / 255);
 
-    const auto lbp_fg = LBP (gray_from (fframe));
-    const auto lbp_bg = LBP (gray_from (background_));
+    const auto lbp_fg = lbp (gray_from (fframe)) / 9;
+    const auto lbp_bg = lbp (gray_from (background_)) / 9;
 
     const auto H = similarity_of (lbp_fg, lbp_bg);
     const auto I = similarity_of (fframe, background_);

@@ -112,6 +112,36 @@ similarity_of (const Mat& fg, const Mat& bg)
     }
 }
 
+void
+sort3 (double* f, int* i)
+{
+    static const int arr [][3] = {
+        { 2, 1, 0 },
+        { 1, 2, 0 },
+        { 0, 0, 0 },
+        { 1, 0, 2 },
+        { 2, 0, 1 },
+        { 0, 0, 0 },
+        { 0, 2, 1 },
+        { 0, 1, 2 }
+    };
+
+    const auto& a = f [0];
+    const auto& b = f [1];
+    const auto& c = f [2];
+
+    unsigned mask =
+        (a >= b ? 4 : 0) |
+        (a >= c ? 2 : 0) |
+        (b >= c ? 1 : 0);
+
+    const auto p = arr [mask];
+
+    i [0] = p [0];
+    i [1] = p [1];
+    i [2] = p [2];
+}
+
 Mat
 sugeno_integral (const Mat& H, const Mat& I, const vector< double >& g)
 {
@@ -143,20 +173,7 @@ sugeno_integral (const Mat& H, const Mat& I, const vector< double >& g)
         // h(x_1) ≥ h(x_2) ≥ h(x_3), if not, X is rearranged so that
         // this relation holds [...]
         //
-#define T(x, y)                                 \
-        if (h_x [x] < h_x [y]) {                \
-            swap (h_x [x], h_x [y]);            \
-            swap (index [x], index [y]);        \
-        }
-
-        T (1, 2);
-        T (0, 1);
-        T (1, 2);
-#undef T
-
-        h_x [0] = h;
-        h_x [1] = d [0];
-        h_x [2] = d [1];
+        sort3 (h_x, index);
 
         //
         // [...] A fuzzy integral, S, with respect to a fuzzy measure g

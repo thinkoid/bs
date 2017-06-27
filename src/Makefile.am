@@ -10,6 +10,7 @@ libbs_la_SOURCES =                              \
   adaptive_learning.cpp                         \
   adaptive_median.cpp                           \
   adaptive_selective_learning.cpp               \
+  fuzzy_sugeno.cpp                              \
   lbp.cpp                                       \
   moving_mean.cpp                               \
   sigma_delta.cpp                               \

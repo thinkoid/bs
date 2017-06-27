@@ -8,6 +8,7 @@ bin_PROGRAMS =                                  \
     adaptive_learning                           \
     adaptive_median                             \
     adaptive_selective_learning                 \
+    fuzzy_sugeno                                \
     moving_mean                                 \
     null                                        \
     sigma_delta                                 \
@@ -26,6 +27,9 @@ adaptive_median_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 adaptive_selective_learning_SOURCES = adaptive_selective_learning.cpp options.cpp
 adaptive_selective_learning_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
+
+fuzzy_sugeno_SOURCES = fuzzy_sugeno.cpp options.cpp
+fuzzy_sugeno_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 moving_mean_SOURCES = moving_mean.cpp options.cpp
 moving_mean_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)

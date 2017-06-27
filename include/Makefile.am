@@ -5,6 +5,7 @@ nobase_include_HEADERS =                        \
   bs/adaptive_median.hpp                        \
   bs/adaptive_selective_learning.hpp            \
   bs/frame_range.hpp                            \
+  bs/fuzzy_sugeno.hpp                           \
   bs/lbp.hpp                                    \
   bs/moving_mean.hpp                            \
   bs/null.hpp                                   \

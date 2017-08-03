@@ -6,13 +6,8 @@ CLANG_WARNFLAGS=" \
 -Wno-deprecated-register \
 -Wno-logical-op-parentheses"
 
-GCC_WARNFLAGS=" \
--Wall \
--Wno-parentheses \
--Wno-strict-aliasing \
--Wno-unused-function \
--Wno-unused-local-typedefs \
--Wno-unused-variable"
+GCC_WARNFLAGS=" -W -Wall \
+-Wno-parentheses"
 
 test -z "$OSNAME" && OSNAME=$( uname )
 

@@ -76,6 +76,6 @@ run_with (const char* s) {
 
 ////////////////////////////////////////////////////////////////////////
 
-int main (int argc, char** argv) {
+int main (int, char** argv) {
     return run_with (argv [1]), 0;
 }

@@ -21,9 +21,6 @@ cv::Mat
 mono_from (const cv::Mat&, double scale = 255., double offset = 0.);
 
 cv::Mat
-mono_integral_from (cv::Mat, double scale = 1., double offset = 0.);
-
-cv::Mat
 median_blur (const cv::Mat&, int size = 3);
 
 cv::Mat

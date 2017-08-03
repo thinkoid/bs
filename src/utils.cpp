@@ -165,9 +165,6 @@ scale_frame (cv::Mat& frame, double factor) {
     cv::Mat tiny;
     cv::resize (bw, tiny, cv::Size (), factor, factor, cv::INTER_LINEAR);
 
-    // this adds a lot of noise in dark images
-    // cv::equalizeHist (tiny, tiny);
-
     return tiny;
 }
 
@@ -213,11 +210,6 @@ float_from (const cv::Mat& src, double scale, double offset) {
 cv::Mat
 mono_from (const cv::Mat& src, double scale, double offset) {
     return convert (src, CV_8U, scale, offset);
-}
-
-cv::Mat
-mono_integral_from (cv::Mat src, double scale, double offset) {
-    return convert (src, CV_32S, scale, offset);
 }
 
 cv::Mat

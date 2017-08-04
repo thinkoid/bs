@@ -2,6 +2,8 @@
 #define BS_ADAPTIVE_MEDIAN_HPP
 
 #include <bs/defs.hpp>
+#include <bs/detail/base.hpp>
+
 #include <opencv2/core/mat.hpp>
 
 namespace bs {
@@ -22,20 +24,14 @@ namespace bs {
 // }
 //
 
-struct adaptive_median {
-    explicit adaptive_median (const cv::Mat&, size_t, size_t);
+struct adaptive_median_t : detail::base_t {
+    adaptive_median_t (const cv::Mat&, size_t, size_t);
 
 public:
     const cv::Mat&
     operator() (const cv::Mat&);
 
-    const cv::Mat&
-    mask () const {
-        return mask_;
-    }
-
 private:
-    cv::Mat background_, mask_;
     size_t frame_interval_, frame_counter_, threshold_;
 };
 

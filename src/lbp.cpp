@@ -1,5 +1,5 @@
 #include <bs/utils.hpp>
-#include <bs/lbp.hpp>
+#include <bs/detail/lbp.hpp>
 
 #include <opencv2/imgproc.hpp>
 
@@ -8,7 +8,7 @@ namespace detail {
 
 template< typename T >
 inline cv::Mat
-lbp (const cv::Mat& src) {
+lbp (const cv::Mat& src, double off) {
     static const int arr [] = {
         0, 1, 1, 2, 1, 9, 2, 3, 1, 9, 9, 9, 2, 9, 3, 4,
         1, 9, 9, 9, 9, 9, 9, 9, 2, 9, 9, 9, 3, 9, 4, 5,
@@ -39,7 +39,7 @@ lbp (const cv::Mat& src) {
         ++s;
 
         for (int j = 1; j < src.cols - 1; ++j, ++p, ++q, ++r, ++s) {
-            T t = q [1];
+            T t = q [1] + off;
 
             unsigned u =
                 ((p [0] >= t) << 7) +
@@ -59,22 +59,20 @@ lbp (const cv::Mat& src) {
     return dst;
 }
 
-} // namespace detail
-
 cv::Mat
 lbp (const cv::Mat& src) {
     BOOST_ASSERT (1 == src.channels ());
 
-#define T(x, y) case x: return detail::lbp< y > (src)
+#define T(x, y, z) case x: return detail::lbp< y > (src, z)
 
     switch (src.type ()) {
-        T (CV_8SC1,                 char);
-        T (CV_8UC1,        unsigned char);
-        T (CV_16SC1,           short int);
-        T (CV_16UC1,  unsigned short int);
-        T (CV_32SC1,                 int);
-        T (CV_32FC1,               float);
-        T (CV_64FC1,              double);
+        T (CV_8SC1,                 char, 0);
+        T (CV_8UC1,        unsigned char, 0);
+        T (CV_16SC1,           short int, 0);
+        T (CV_16UC1,  unsigned short int, 0);
+        T (CV_32SC1,                 int, 0);
+        T (CV_32FC1,               float, 1./255);
+        T (CV_64FC1,              double, 1./255);
     default:
         throw std::invalid_argument ("unsupported type");
     }
@@ -83,4 +81,4 @@ lbp (const cv::Mat& src) {
 
 }
 
-} // namespace bs
+}}

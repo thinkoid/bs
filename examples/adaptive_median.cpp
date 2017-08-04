@@ -17,7 +17,7 @@ namespace po = boost::program_options;
 options_t::options_t (int argc, char** argv) {
     {
         auto tmp = std::make_pair (
-            "program", po::variable_value (std::string (argv [0]), false));
+                       "program", po::variable_value (std::string (argv [0]), false));
         map_.insert (tmp);
     }
 
@@ -25,20 +25,20 @@ options_t::options_t (int argc, char** argv) {
     po::options_description config ("Configuration options");
 
     generic.add_options ()
-        ("version,v", "version")
-        ("help,h", "this");
+    ("version,v", "version")
+    ("help,h", "this");
 
     config.add_options ()
-        ("display,d", "display frames.")
+    ("display,d", "display frames.")
 
-        ("input,i",   po::value< std::string > ()->default_value ("0"),
-         "input (file or stream index).")
+    ("input,i",   po::value< std::string > ()->default_value ("0"),
+     "input (file or stream index).")
 
-        ("frame-interval,f", po::value< size_t > ()->default_value (10),
-         "frame sampling interval.")
+    ("frame-interval,f", po::value< size_t > ()->default_value (10),
+     "frame sampling interval.")
 
-        ("threshold,t", po::value< size_t > ()->default_value (15),
-         "threshold value");
+    ("threshold,t", po::value< size_t > ()->default_value (15),
+     "threshold value");
 
     desc_ = boost::make_shared< po::options_description > ();
 
@@ -85,15 +85,15 @@ process_adaptive_median (cv::VideoCapture& cap, const options_t& opts) {
     //
     cv::Mat background = bs::scale_frame (*bs::getframes_from (cap).begin ());
 
-    bs::adaptive_median subtractor (
+    bs::adaptive_median_t adaptive_median (
         background,
         opts ["frame-interval"].as< size_t > (),
         opts ["threshold"].as< size_t > ());
 
     for (auto& frame : bs::getframes_from (cap)) {
-        bs::frame_delay temp { 40 };
+        bs::frame_delay temp { 10 };
 
-        auto mask = subtractor (bs::scale_frame (frame));
+        auto mask = adaptive_median (bs::scale_frame (frame));
 
         if (display)
             imshow ("Adaptive median difference", mask);

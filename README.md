@@ -7,12 +7,11 @@ and OpenCV. See the [COPYING](COPYING) for license rights and limitations (BSD).
 
 ### Adaptive Median
 
-It implements [1995McFarlane](#1995McFarlane).
+It implements [1995McFarlane](#1995McFarlane). 
 
 ### Fuzzy Sugeno
 
-It implements [2006Zhang](#2006Zhang). Internally, it uses the LBP operator described
-in [2001Ojala](#2001Ojala). 
+It implements [2006Zhang](#2006Zhang).
 
 ### Sigma-Delta
 
@@ -21,11 +20,6 @@ It implements [2007Manzanera](#2007Manzanera).
 ### Temporal Median
 
 It implements [2006Calderara](#2006Calderara).
-
-### Other
-
-There are a few other ad-hoc algorithms in between of lesser importance and/or
-dubious quality.
 
 ## Utilities
 
@@ -48,11 +42,6 @@ The code for that is in `include/bs/frame_range.hpp`, enjoy.
 No.
 
 ## References
-
-<a name="2001Ojala">[2001Ojala]</a> Ojala, Timo, Matti Pietikäinen, and Topi
-Mäenpää. "A generalized local binary pattern operator for multiresolution gray
-scale and rotation invariant texture classification." *International Conference
-on Advances in Pattern Recognition.* Springer, Berlin, Heidelberg, 2001.
 
 <a name="1995McFarlane">[1995McFarlane]</a> McFarlane, Nigel JB, and C. Paddy
 Schofield. "Segmentation and tracking of piglets in images." *Machine vision and

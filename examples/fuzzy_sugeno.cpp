@@ -28,7 +28,7 @@ operator<< (std::ostream& s, const std::vector< T >& v) {
 options_t::options_t (int argc, char** argv) {
     {
         auto tmp = std::make_pair (
-            "program", po::variable_value (std::string (argv [0]), false));
+                       "program", po::variable_value (std::string (argv [0]), false));
         map_.insert (tmp);
     }
 
@@ -36,30 +36,30 @@ options_t::options_t (int argc, char** argv) {
     po::options_description config ("Configuration options");
 
     generic.add_options ()
-        ("version,v", "version")
-        ("help,h", "this");
+    ("version,v", "version")
+    ("help,h", "this");
 
     config.add_options ()
-        ("display,d", "display frames.")
+    ("display,d", "display frames.")
 
-        ("input,i",   po::value< std::string > ()->default_value ("0"),
-         "input (file or stream index).")
+    ("input,i",   po::value< std::string > ()->default_value ("0"),
+     "input (file or stream index).")
 
-        ("measure,m", po::value< std::vector< double > > ()->multitoken ()
-         ->default_value (std::vector< double >{ .4, .3, .3 }),
-         "lambda measure, sum must be 1")
+    ("measure,m", po::value< std::vector< double > > ()->multitoken ()
+     ->default_value (std::vector< double > { .4, .3, .3 }),
+     "lambda measure, sum must be 1")
 
-        ("alpha,a", po::value< double > ()->default_value (.01),
-         "alpha")
+    ("alpha,a", po::value< double > ()->default_value (.01),
+     "alpha")
 
-        ("background-alpha,b", po::value< double > ()->default_value (.1),
-         "alpha for background learning")
+    ("background-alpha,b", po::value< double > ()->default_value (.1),
+     "alpha for background learning")
 
-        ("learning-frames,n", po::value< size_t > ()->default_value (10UL),
-         "number of learning frames")
+    ("learning-frames,n", po::value< size_t > ()->default_value (10UL),
+     "number of learning frames")
 
-        ("threshold,t", po::value< double > ()->default_value (.67),
-         "threshold value");
+    ("threshold,t", po::value< double > ()->default_value (.67),
+     "threshold value");
 
     desc_ = boost::make_shared< po::options_description > ();
 
@@ -101,22 +101,22 @@ static void
 process_fuzzy_sugeno (cv::VideoCapture& cap, const options_t& opts) {
     const bool display = opts.have ("display");
 
-    bs::fuzzy_sugeno_bootstrap bootstrap;
+    bs::fuzzy_sugeno_bootstrap_t fuzzy_sugeno_bootstrap;
 
     for (auto& frame : bs::getframes_from (cap))
-        if (bootstrap (frame))
+        if (fuzzy_sugeno_bootstrap (frame))
             break;
 
-    bs::fuzzy_sugeno subtractor (
-        bootstrap.background (),
-        opts ["measure"].as< std::vector< double > > (),
+    bs::fuzzy_sugeno_t fuzzy_sugeno (
+        fuzzy_sugeno_bootstrap.background (),
         opts ["alpha"].as< double > (),
-        opts ["threshold"].as< double > ());
+        opts ["threshold"].as< double > (),
+        opts ["measure"].as< std::vector< double > > ());
 
     for (auto& frame : bs::getframes_from (cap)) {
-        bs::frame_delay temp { 40 };
+        bs::frame_delay temp { 10 };
 
-        const auto mask = subtractor (frame);
+        const auto mask = fuzzy_sugeno (frame);
 
         if (display)
             imshow ("Fuzzy Sugeno integral background subtraction", mask);

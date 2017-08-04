@@ -17,7 +17,7 @@ namespace po = boost::program_options;
 options_t::options_t (int argc, char** argv) {
     {
         auto tmp = std::make_pair (
-            "program", po::variable_value (std::string (argv [0]), false));
+                       "program", po::variable_value (std::string (argv [0]), false));
         map_.insert (tmp);
     }
 
@@ -25,23 +25,23 @@ options_t::options_t (int argc, char** argv) {
     po::options_description config ("Configuration options");
 
     generic.add_options ()
-        ("version,v", "version")
-        ("help,h", "this");
+    ("version,v", "version")
+    ("help,h", "this");
 
     config.add_options ()
-        ("display,d", "display frames.")
+    ("display,d", "display frames.")
 
-        ("input,i",   po::value< std::string > ()->default_value ("0"),
-         "input (file or stream index).")
+    ("input,i",   po::value< std::string > ()->default_value ("0"),
+     "input (file or stream index).")
 
-        ("multiplier,m", po::value< double > ()->default_value (2.),
-         "delta multiplier")
+    ("multiplier,m", po::value< double > ()->default_value (2.),
+     "delta multiplier")
 
-        ("min-variance,v", po::value< size_t > ()->default_value (2),
-         "minimal variance threshold")
+    ("min-variance,v", po::value< size_t > ()->default_value (2),
+     "minimal variance threshold")
 
-        ("max-variance,V", po::value< size_t > ()->default_value (255),
-         "maximal variance threshold");
+    ("max-variance,V", po::value< size_t > ()->default_value (255),
+     "maximal variance threshold");
 
     desc_ = boost::make_shared< po::options_description > ();
 
@@ -88,16 +88,16 @@ process_sigma_delta (cv::VideoCapture& cap, const options_t& opts) {
     //
     cv::Mat background = bs::scale_frame (*bs::getframes_from (cap).begin ());
 
-    bs::sigma_delta subtractor (
+    bs::sigma_delta_t sigma_delta (
         background,
         opts ["multiplier"].as< double > (),
         opts ["min-variance"].as< size_t > (),
         opts ["max-variance"].as< size_t > ());
 
     for (auto& frame : bs::getframes_from (cap)) {
-        bs::frame_delay temp { 40 };
+        bs::frame_delay temp { 10 };
 
-        auto mask = subtractor (bs::scale_frame (frame));
+        auto mask = sigma_delta (bs::scale_frame (frame));
 
         if (display)
             imshow ("Sigma-delta difference", mask);

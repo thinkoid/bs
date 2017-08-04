@@ -1,89 +1,156 @@
-#ifndef BS_COMMON_HPP
-#define BS_COMMON_HPP
+#ifndef BS_UTILS_HPP
+#define BS_UTILS_HPP
 
 #include <bs/defs.hpp>
-#include <opencv2/imgproc.hpp>
+#include <bs/detail/threshold.hpp>
 
 #include <chrono>
+#include <functional>
+
+#include <opencv2/imgproc.hpp>
 
 namespace bs {
+namespace detail {
 
-const int BACKGROUND = 0;
-const int FOREGROUND = 255;
+inline cv::Mat
+scale_frame (cv::Mat& frame, double factor) {
+    cv::Mat bw;
+    cv::cvtColor (frame, bw, cv::COLOR_BGR2GRAY);
 
-cv::Mat
-convert (cv::Mat, int, double a = 1, double b = 0);
+    cv::Mat tiny;
+    cv::resize (bw, tiny, cv::Size (), factor, factor, cv::INTER_LINEAR);
 
-cv::Mat
-float_from (const cv::Mat&, double scale = 1. / 255, double offset = 0.);
+    return tiny;
+}
 
-cv::Mat
-mono_from (const cv::Mat&, double scale = 255., double offset = 0.);
+}
 
-cv::Mat
-median_blur (const cv::Mat&, int size = 3);
+inline std::pair< double, double >
+minmax (const cv::Mat& src) {
+    double a, b;
+    minMaxLoc (src, &a, &b);
+    return { a, b };
+}
 
-cv::Mat
-multiply (const cv::Mat&, const cv::Mat&);
+inline cv::Mat
+convert (const cv::Mat& src, int t, double a = 1, double b = 0) {
+    cv::Mat dst;
+    return src.convertTo (dst, t, a, b), dst;
+}
 
-cv::Mat
-convert_color (const cv::Mat&, int);
+inline cv::Mat
+float_from (const cv::Mat& src, double scale = 1. / 255, double offset = 0.) {
+    return convert (src, CV_32F, scale, offset);
+}
 
-int
-gray_from (int r, int g, int b);
+inline cv::Mat
+mono_from (const cv::Mat& src, double scale = 255., double offset = 0.) {
+    return convert (src, CV_8U, scale, offset);
+}
 
-int
-gray_from (const cv::Vec3b& arg);
+inline cv::Mat
+median_blur (const cv::Mat& src, int size = 3) {
+    cv::Mat dst;
+    return cv::medianBlur (src, dst, size), dst;
+}
 
-cv::Mat
-gray_from (const cv::Mat&);
+inline cv::Mat
+multiply (const cv::Mat& lhs, const cv::Mat& rhs) {
+    cv::Mat dst;
+    return cv::multiply (lhs, rhs, dst), dst;
+}
 
-cv::Mat
-threshold (const cv::Mat&, double threshold = 1.0,
-           double maxval = 255.0, int type = CV_THRESH_BINARY);
+inline cv::Mat
+convert_color (const cv::Mat& src, int type) {
+    cv::Mat dst;
+    return cv::cvtColor (src, dst, type), dst;
+}
 
-cv::Mat
-power_of (const cv::Mat&, double);
+inline int
+gray_from (int r, int g, int b) {
+    return double (r + g + b) / 3;
+}
 
-cv::Mat
-absdiff (const cv::Mat&, const cv::Mat&);
+inline int
+gray_from (const cv::Vec3b& arg) {
+    return gray_from (arg [0], arg [1], arg [2]);
+}
 
-cv::Mat
-square_of (const cv::Mat&);
+inline cv::Mat
+gray_from (const cv::Mat& src) {
+    return convert_color (src, cv::COLOR_BGR2GRAY);
+}
 
-cv::Mat
-bitwise_and (const cv::Mat&, const cv::Mat&);
+inline cv::Mat
+power_of (const cv::Mat& src, double power) {
+    cv::Mat dst;
+    return cv::pow (src, power, dst), dst;
+}
 
-cv::Mat
-bitwise_and (const cv::Mat&, const cv::Mat&, const cv::Mat&);
+inline cv::Mat
+absdiff (const cv::Mat& lhs, const cv::Mat& rhs) {
+    cv::Mat dst;
+    return cv::absdiff (lhs, rhs, dst), dst;
+}
 
-cv::Mat
-bitwise_not (cv::Mat);
+inline cv::Mat
+scale_frame (cv::Mat& src, size_t to = 512) {
+    return detail::scale_frame (src, double (to) / src.cols);
+}
 
-cv::Mat
-bitwise_not (cv::Mat, const cv::Mat&);
+inline cv::Mat
+threshold (const cv::Mat& src, double threshold_ = 1., double maxval = 255.,
+           int type = cv::THRESH_BINARY) {
+    cv::Mat dst;
 
-cv::Mat
-mask (const cv::Mat&, const cv::Mat&);
+    switch (src.type ()) {
+    case CV_8U:
+    case CV_32F:
+        cv::threshold (src, dst, threshold_, maxval, type);
+        break;
 
-cv::Mat
-flip (const cv::Mat&, int how = 0);
+#define T(x, y) case x:                                                 \
+        dst = detail::threshold< y > (src, threshold_, maxval, type);   \
+        break
 
-int
-chebyshev (const cv::Vec3b&, const cv::Vec3b&);
+        T (CV_16U, unsigned short int);
+        T (CV_16S, short int);
+        T (CV_32S, int);
 
-cv::Mat
-scale_frame (cv::Mat&, size_t to = 512);
+#undef T
+
+    default:
+        throw std::invalid_argument ("unsupported array type");
+    }
+
+    return dst;
+}
 
 struct frame_delay {
-    explicit frame_delay (size_t value = 40 /* milliseconds */);
-    bool wait_for_key (int key) const;
+    frame_delay (size_t value = 40)
+        : value_ (value),
+          begin_ (std::chrono::high_resolution_clock::now ())
+    { }
+
+    bool wait_for_key (int key) const  {
+        using namespace std::chrono;
+
+        int passed = duration_cast< milliseconds > (
+                         high_resolution_clock::now () - begin_).count ();
+
+        int remaining = value_ - passed;
+
+        if (remaining < 1)
+            remaining = 1;
+
+        return key == cv::waitKey (remaining);
+    }
 
 private:
     int value_;
     std::chrono::high_resolution_clock::time_point begin_;
 };
 
-} // namespace bs
+}
 
-#endif // BS_COMMON_HPP
+#endif // BS_UTILS_HPP

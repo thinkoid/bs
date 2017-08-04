@@ -17,7 +17,7 @@ namespace po = boost::program_options;
 options_t::options_t (int argc, char** argv) {
     {
         auto tmp = std::make_pair (
-            "program", po::variable_value (std::string (argv [0]), false));
+                       "program", po::variable_value (std::string (argv [0]), false));
         map_.insert (tmp);
     }
 
@@ -25,29 +25,29 @@ options_t::options_t (int argc, char** argv) {
     po::options_description config ("Configuration options");
 
     generic.add_options ()
-        ("version,v", "version")
-        ("help,h", "this");
+    ("version,v", "version")
+    ("help,h", "this");
 
     config.add_options ()
-        ("display,d", "display frames.")
+    ("display,d", "display frames.")
 
-        ("input,i",   po::value< std::string > ()->default_value ("0"),
-         "input (file or stream index).")
+    ("input,i",   po::value< std::string > ()->default_value ("0"),
+     "input (file or stream index).")
 
-        ("lambda", po::value< double > ()->default_value (7),
-         "a threshold multiplier (2)")
+    ("lambda", po::value< double > ()->default_value (7),
+     "a threshold multiplier (2)")
 
-        ("history-size", po::value< size_t > ()->default_value (9),
-         "length of frame history buffer (9)")
+    ("history-size", po::value< size_t > ()->default_value (9),
+     "length of frame history buffer (9)")
 
-        ("frame-interval", po::value< size_t > ()->default_value (16),
-         "interval between frames sampled for history buffer (16)")
+    ("frame-interval", po::value< size_t > ()->default_value (16),
+     "interval between frames sampled for history buffer (16)")
 
-        ("lo", po::value< size_t > ()->default_value (2),
-         "distance from median for low threshold(2)")
+    ("lo", po::value< size_t > ()->default_value (2),
+     "distance from median for low threshold(2)")
 
-        ("hi", po::value< size_t > ()->default_value (4),
-         "distance from median for high threshold (4)");
+    ("hi", po::value< size_t > ()->default_value (4),
+     "distance from median for high threshold (4)");
 
     desc_ = boost::make_shared< po::options_description > ();
 
@@ -89,14 +89,14 @@ static void
 process_temporal_median_background (cv::VideoCapture& cap, const options_t& opts) {
     const bool display = opts.have ("display");
 
-    bs::temporal_median_bootstrap bootstrap;
+    bs::temporal_median_bootstrap_t temporal_median_bootstrap;
 
     for (auto& frame : bs::getframes_from (cap))
-        if (bootstrap (bs::scale_frame (frame)))
+        if (temporal_median_bootstrap (bs::scale_frame (frame)))
             break;
 
-    bs::temporal_median subtractor (
-        bootstrap.background (),
+    bs::temporal_median_t temporal_median (
+        temporal_median_bootstrap.background (),
         opts ["history-size" ].as< size_t > (),
         opts ["frame-interval" ].as< size_t > (),
         opts ["lambda" ].as< double > (),
@@ -104,9 +104,9 @@ process_temporal_median_background (cv::VideoCapture& cap, const options_t& opts
         opts ["hi" ].as< size_t > ());
 
     for (auto& frame : bs::getframes_from (cap)) {
-        bs::frame_delay temp { 40 };
+        bs::frame_delay temp { 10 };
 
-        auto mask = subtractor (bs::scale_frame (frame));
+        auto mask = temporal_median (bs::scale_frame (frame));
 
         if (display)
             imshow ("Temporal median", mask);

@@ -9,18 +9,18 @@ using namespace std;
 namespace bs {
 
 /* explicit */
-sigma_delta::sigma_delta (const cv::Mat& background,
-                          size_t n, size_t Vmin, size_t Vmax)
-    : mask_ (background.size (), CV_8U, cv::Scalar (0)),
-      m_ (background.clone ()),
-      d_ (background.size (), CV_8U, cv::Scalar (0)),
-      v_ (background.size (), CV_8U, cv::Scalar (0)),
-      q_ (background.size (), CV_8U, cv::Scalar (255)),
-      n_ (n), Vmin_ (Vmin), Vmax_ (Vmax) {
-}
+sigma_delta_t::sigma_delta_t (
+    const cv::Mat& b, size_t n, size_t Vmin, size_t Vmax)
+    : detail::base_t (b, { b.size (), CV_8U, cv::Scalar (0) }),
+      m_ (b.clone ()),
+      d_ (b.size (), CV_8U, cv::Scalar (0)),
+      v_ (b.size (), CV_8U, cv::Scalar (0)),
+      q_ (b.size (), CV_8U, cv::Scalar (255)),
+      n_ (n), Vmin_ (Vmin), Vmax_ (Vmax)
+{ }
 
 const cv::Mat&
-sigma_delta::operator() (const cv::Mat& frame) {
+sigma_delta_t::operator() (const cv::Mat& frame) {
     //
     // m_ is M_t, a running approximation of the median:
     //
@@ -81,4 +81,4 @@ sigma_delta::operator() (const cv::Mat& frame) {
     return mask_ = threshold (d_ - v_, 0, 255);
 }
 
-} // namespace bs
+}

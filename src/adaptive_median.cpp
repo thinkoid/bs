@@ -5,13 +5,10 @@
 
 namespace bs {
 
-/* explicit */
-adaptive_median::adaptive_median (
-    const cv::Mat& background, size_t frame_interval, size_t threshold)
-    : background_ (background), mask_ (),
-      frame_interval_ (frame_interval), frame_counter_ (),
-      threshold_ (threshold) {
-}
+adaptive_median_t::adaptive_median_t (const cv::Mat& b, size_t i, size_t t)
+    : detail::base_t (b), frame_interval_ (i), frame_counter_ { },
+      threshold_ (t)
+{ }
 
 //
 // ... Image differencing between the current frame and a reference image gave
@@ -34,11 +31,7 @@ adaptive_median::adaptive_median (
 //
 
 const cv::Mat&
-adaptive_median::operator() (const cv::Mat& frame) {
-    //
-    // The motion mask is a simple thresholded difference between the current
-    // frame and the reference (background) frame:
-    //
+adaptive_median_t::operator() (const cv::Mat& frame) {
     mask_ = threshold (absdiff (frame, background_), threshold_);
 
     if (0 == frame_counter_++ % frame_interval_) {

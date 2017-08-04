@@ -10,7 +10,7 @@
 namespace bs {
 
 /* explicit */
-temporal_median_bootstrap::temporal_median_bootstrap (
+temporal_median_bootstrap_t::temporal_median_bootstrap_t (
     size_t block_size,
     size_t threshold,
     size_t threshold_increment,
@@ -30,7 +30,7 @@ temporal_median_bootstrap::temporal_median_bootstrap (
 { }
 
 bool
-temporal_median_bootstrap::initialize_background_from (const cv::Mat& frame) {
+temporal_median_bootstrap_t::initialize_background_from (const cv::Mat& frame) {
     background_ = frame.clone ();
     framebuf_.push_back (frame.clone ());
 
@@ -51,7 +51,7 @@ temporal_median_bootstrap::initialize_background_from (const cv::Mat& frame) {
 
         for (const auto c : h) {
             const size_t motionthreshold = size_t (
-                (n * n) * (double (motionthreshold_) / 100));
+                                               (n * n) * (double (motionthreshold_) / 100));
 
             //
             // Our approach basically partitions the image into blocks (of 16×16
@@ -76,9 +76,9 @@ temporal_median_bootstrap::initialize_background_from (const cv::Mat& frame) {
 }
 
 bool
-temporal_median_bootstrap::update_background_from (const cv::Mat& frame) {
+temporal_median_bootstrap_t::update_background_from (const cv::Mat& frame) {
     framebuf_.push_back (frame.clone ());
-    assert (framebuf_.size () == framebuf_.capacity ());
+    BS_ASSERT (framebuf_.size () == framebuf_.capacity ());
 
     const cv::Mat &p = framebuf_ [0], &q = framebuf_ [1];
 
@@ -150,35 +150,28 @@ temporal_median_bootstrap::update_background_from (const cv::Mat& frame) {
     }
 
     return complete_ = all_of (
-        blocks_.begin (), blocks_.end (), [](const auto& b) {
-            return b.stable;
-        });
+    blocks_.begin (), blocks_.end (), [](const auto& b) {
+        return b.stable;
+    });
 }
 
 bool
-temporal_median_bootstrap::process (const cv::Mat& frame) {
+temporal_median_bootstrap_t::process (const cv::Mat& frame) {
     return 0 == init_ && 1 == ++init_
-        ? initialize_background_from (frame)
-        : update_background_from (frame);
+           ? initialize_background_from (frame)
+           : update_background_from (frame);
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-temporal_median::temporal_median (
-    const cv::Mat& background,
-    size_t history_size, size_t frame_interval,
-    double lambda, size_t lo, size_t hi)
-    : background_ (background.clone ()),
-      mask_ (background.size (), CV_8U),
-      history_ (history_size),
-      lambda_ (lambda), lo_ (lo), hi_ (hi),
-      frame_interval_ (frame_interval),
-      frame_counter_ () {
-    assert (background_.channels () == 1);
-}
+temporal_median_t::temporal_median_t (
+    const cv::Mat& b, size_t h, size_t i, double l, size_t lo, size_t hi)
+    : detail::base_t (b.clone (), { b.size (), CV_8U }), history_ (h),
+      lambda_ (l), lo_ (lo), hi_ (hi), frame_interval_ (i), frame_counter_ { }
+{ }
 
 std::tuple< cv::Mat, cv::Mat, cv::Mat >
-temporal_median::calculate_masks () const {
+temporal_median_t::calculate_masks () const {
     cv::Mat background (background_.size (), CV_8U);
     cv::Mat lo_mask    (background_.size (), CV_8U);
     cv::Mat hi_mask    (background_.size (), CV_8U);
@@ -192,9 +185,9 @@ temporal_median::calculate_masks () const {
         // the history order:
         //
         std::transform (
-            history_.begin (), history_.end (), buf.begin (), [&](auto& x) {
-                return x.template at< unsigned char > (i);
-            });
+        history_.begin (), history_.end (), buf.begin (), [&](auto& x) {
+            return x.template at< unsigned char > (i);
+        });
 
         //
         // Use the current background, i.e., the median from the previous
@@ -213,16 +206,16 @@ temporal_median::calculate_masks () const {
         // in position, hence in value, to the median:
         //
         lo_mask.data [i] = cv::saturate_cast< unsigned char > (
-            lambda_ * std::abs (int (buf [median_pos + lo_]) -
-                                int (buf [median_pos - lo_])));
+                               lambda_ * std::abs (int (buf [median_pos + lo_]) -
+                                       int (buf [median_pos - lo_])));
 
         //
         // The high threshold mask value is the difference between pixels farther
         // apart, hence in value, from the median:
         //
         hi_mask.data [i] = cv::saturate_cast< unsigned char > (
-            lambda_ * std::abs (int (buf [median_pos + hi_]) -
-                                int (buf [median_pos - hi_])));
+                               lambda_ * std::abs (int (buf [median_pos + hi_]) -
+                                       int (buf [median_pos - hi_])));
 
         //
         // Update the background to the new median value:
@@ -234,11 +227,11 @@ temporal_median::calculate_masks () const {
 }
 
 cv::Mat
-temporal_median::compose_masks (
+temporal_median_t::compose_masks (
     const cv::Mat& lo_mask, const cv::Mat& hi_mask, size_t maxval) {
 
-    assert (lo_mask.size () == hi_mask.size ());
-    assert (lo_mask.type () == hi_mask.type ());
+    BS_ASSERT (lo_mask.size () == hi_mask.size ());
+    BS_ASSERT (lo_mask.type () == hi_mask.type ());
 
     const unsigned char *p = lo_mask.data, *q = hi_mask.data;
 
@@ -251,7 +244,7 @@ temporal_median::compose_masks (
         for (size_t j = 1; j < w - 1; ++j) {
 
             const size_t pos = i * w + j;
-            assert (pos < w * h);
+            BS_ASSERT (pos < w * h);
 
             //
             // A pixel is marked as foreground ... if it is presented(sic) in
@@ -260,15 +253,15 @@ temporal_median::compose_masks (
             // mask:
             //
             if (p [pos] && (
-                    q [pos] ||
-                    q [pos - w - 1] ||
-                    q [pos - w] ||
-                    q [pos - w + 1] ||
-                    q [pos - 1] ||
-                    q [pos + 1] ||
-                    q [pos + w - 1] ||
-                    q [pos + w] ||
-                    q [pos + w + 1])) {
+                        q [pos] ||
+                        q [pos - w - 1] ||
+                        q [pos - w] ||
+                        q [pos - w + 1] ||
+                        q [pos - 1] ||
+                        q [pos + 1] ||
+                        q [pos + w - 1] ||
+                        q [pos + w] ||
+                        q [pos + w + 1])) {
                 r [pos] = maxval;
             }
         }
@@ -278,11 +271,11 @@ temporal_median::compose_masks (
 }
 
 cv::Mat
-temporal_median::threshold (
+temporal_median_t::threshold (
     const cv::Mat& src, const cv::Mat& mask, size_t maxval) {
 
-    assert (src.size () == mask.size ());
-    assert (src.type () == mask.type ());
+    BS_ASSERT (src.size () == mask.size ());
+    BS_ASSERT (src.type () == mask.type ());
 
     const unsigned char *p = src.data, *q = mask.data;
 
@@ -296,9 +289,9 @@ temporal_median::threshold (
 }
 
 const cv::Mat&
-temporal_median::operator () (const cv::Mat& frame) {
-    assert (frame.size ()     == background_.size ());
-    assert (frame.channels () == background_.channels ());
+temporal_median_t::operator () (const cv::Mat& frame) {
+    BS_ASSERT (frame.size ()     == background_.size ());
+    BS_ASSERT (frame.channels () == background_.channels ());
 
     if (history_.size () < history_.capacity ()) {
         //
@@ -351,4 +344,4 @@ temporal_median::operator () (const cv::Mat& frame) {
     }
 }
 
-} // namespace bs
+}

@@ -2,6 +2,8 @@
 #define BS_SIGMA_DELTA_HPP
 
 #include <bs/defs.hpp>
+#include <bs/detail/base.hpp>
+
 #include <opencv2/core/mat.hpp>
 
 namespace bs {
@@ -37,21 +39,15 @@ namespace bs {
 //   organization={IEEE}
 // }
 
-struct sigma_delta {
-    explicit sigma_delta (
-        const cv::Mat&, size_t = 2, size_t = 2, size_t = 255);
+struct sigma_delta_t : detail::base_t {
+    explicit sigma_delta_t (const cv::Mat&, size_t = 2, size_t = 2, size_t = 255);
 
 public:
     const cv::Mat&
     operator() (const cv::Mat&);
 
-    const cv::Mat&
-    mask () const {
-        return mask_;
-    }
-
 private:
-    cv::Mat mask_, m_, d_, v_, q_;
+    cv::Mat m_, d_, v_, q_;
     size_t n_, Vmin_, Vmax_;
 };
 

@@ -1,5 +1,5 @@
 #include <bs/fuzzy_sugeno.hpp>
-#include <bs/lbp.hpp>
+#include <bs/detail/lbp.hpp>
 #include <bs/utils.hpp>
 
 #include <algorithm>
@@ -32,6 +32,15 @@ h_texture (const Vec3f& lhs, const Vec3f& rhs)
     return result;
 }
 
+//
+// On similarity:
+//
+// [...] uncertainty h_{texture} which is deﬁned as [...], where
+// G_B(x_c,y_c) is the texture LBP of pixel (x_c,y_c) in background and
+// G_t(x_c,y_c) is the texture LBP of pixel (x_c,y_c) in time t video
+// frame. similarity is close to one if G_B(x_c,y_c) and
+// G_t(x_c,y_c) are very similar.
+//
 Mat
 similarity1 (const Mat& fg, const Mat& bg)
 {
@@ -54,25 +63,6 @@ similarity3 (const Mat& fg, const Mat& bg)
     }
 
     return d;
-}
-
-Mat
-similarity_of (const Mat& fg, const Mat& bg)
-{
-    //
-    // [...] uncertainty h_{texture} which is deﬁned as [...], where
-    // G_B(x_c,y_c) is the texture LBP of pixel (x_c,y_c) in background and
-    // G_t(x_c,y_c) is the texture LBP of pixel (x_c,y_c) in time t video
-    // frame. similarity is close to one if G_B(x_c,y_c) and
-    // G_t(x_c,y_c) are very similar.
-    //
-
-    switch (fg.channels ()) {
-    case 1: return similarity1 (fg, bg);
-    case 3: return similarity3 (fg, bg);
-    default:
-        assert (0);
-    }
 }
 
 void
@@ -98,7 +88,7 @@ sort3 (double* f, int* i)
         (a >= c ? 2 : 0) |
         (b >= c ? 1 : 0);
 
-    const auto p = arr [mask];
+    const auto& p = arr [mask];
 
     i [0] = p [0];
     i [1] = p [1];
@@ -153,24 +143,23 @@ sugeno_integral (const Mat& H, const Mat& I, const vector< double >& g)
 }
 
 Mat
-update_background (const Mat& fg, const Mat& bg, const Mat& S, float alpha)
+update_background (const Mat& F, const Mat& B, const Mat& S, float alpha)
 {
-    Mat result (fg.size (), CV_32FC3, Scalar (0));
+    Mat result (F.size (), CV_32FC3, Scalar (0));
 
     double max_, min_;
-    minMaxLoc (S, &min_, &max_);
+    std::tie (min_, max_) = bs::minmax (S);
 
-    assert (min_ >= 0. && max_ >= 0. && 1.0 >= min_ && 1.0 >= max_);
+    BS_ASSERT (min_ >= 0. && max_ >= 0. && 1.0 >= min_ && 1.0 >= max_);
 
-    for (size_t i = 0; i < fg.total (); ++i) {
-        const auto& f = fg.at< Vec3f > (i);
-        const auto& b = bg.at< Vec3f > (i);
-
-        const auto& s = S.at< float > (i);
-
+    for (size_t i = 0; i < F.total (); ++i) {
         auto& dst = result.at< Vec3f > (i);
 
-        const auto beta = 1. - (s - min_ * ((max_ - s) / (max_ - min_)));
+        const auto& f = F.at< Vec3f > (i);
+        const auto& b = B.at< Vec3f > (i);
+        const auto& s = S.at< float > (i);
+
+        const auto beta = 1. - max_ * (s - min_) / (max_ - min_);
 
         dst [0] = beta * b [0] + (1 - beta) * (alpha * f [0] + (1 - alpha) * b [0]);
         dst [1] = beta * b [1] + (1 - beta) * (alpha * f [1] + (1 - alpha) * b [1]);
@@ -180,18 +169,18 @@ update_background (const Mat& fg, const Mat& bg, const Mat& S, float alpha)
     return result;
 }
 
-} // anonymous
+}
 
 namespace bs {
 
 /* explicit */
-fuzzy_sugeno_bootstrap::fuzzy_sugeno_bootstrap (
+fuzzy_sugeno_bootstrap_t::fuzzy_sugeno_bootstrap_t (
     double alpha, size_t frame_counter)
     : alpha_ (alpha), frame_counter_ (frame_counter)
 { }
 
 bool
-fuzzy_sugeno_bootstrap::process (const cv::Mat& frame) {
+fuzzy_sugeno_bootstrap_t::process (const cv::Mat& frame) {
     Mat fframe (frame.size (), CV_32F);
     frame.convertTo (fframe, CV_32F, 1. / 255);
 
@@ -206,25 +195,23 @@ fuzzy_sugeno_bootstrap::process (const cv::Mat& frame) {
 }
 
 /* explicit */
-fuzzy_sugeno::fuzzy_sugeno (
-    const cv::Mat& background,
-    const vector< double >& g, double alpha, double threshold)
-    : background_ (background),
-      g_ (g), alpha_ (alpha), threshold_ (threshold)
+fuzzy_sugeno_t::fuzzy_sugeno_t (
+    const cv::Mat& b, double a, double t, const vector< double >& g)
+    : detail::base_t (b), alpha_ (a), threshold_ (t), g_ (g)
 { }
 
 const cv::Mat&
-fuzzy_sugeno::operator() (const cv::Mat& frame) {
-    assert (3 == frame.channels ());
+fuzzy_sugeno_t::operator() (const cv::Mat& frame) {
+    BS_ASSERT (3 == frame.channels ());
 
     Mat fframe (frame.size (), CV_32F);
     frame.convertTo (fframe, CV_32F, 1. / 255);
 
-    const auto lbp_fg = lbp (gray_from (fframe)) / 9;
-    const auto lbp_bg = lbp (gray_from (background_)) / 9;
+    const auto F = detail::lbp (gray_from (fframe)) / 9;
+    const auto B = detail::lbp (gray_from (background_)) / 9;
 
-    const auto H = similarity_of (lbp_fg, lbp_bg);
-    const auto I = similarity_of (fframe, background_);
+    const auto H = similarity1 (F, B);
+    const auto I = similarity3 (fframe, background_);
 
     //
     // Note: for well-chosen densities whose sum is 1.0, the parameter λ

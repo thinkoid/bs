@@ -2,6 +2,7 @@
 #define BS_TEMPORAL_MEDIAN_HPP
 
 #include <bs/defs.hpp>
+#include <bs/detail/base.hpp>
 
 #include <opencv2/core/mat.hpp>
 #include <boost/circular_buffer.hpp>
@@ -33,8 +34,8 @@ namespace bs {
 // }
 //
 
-struct temporal_median_bootstrap {
-    explicit temporal_median_bootstrap (
+struct temporal_median_bootstrap_t {
+    explicit temporal_median_bootstrap_t (
         size_t block_size = 16,
         size_t threshold = 15,
         size_t threshold_increment = 15,
@@ -80,18 +81,13 @@ private:
     int init_, complete_;
 };
 
-struct temporal_median {
-    explicit temporal_median (
+struct temporal_median_t : detail::base_t {
+    explicit temporal_median_t (
         const cv::Mat&, size_t = 9, size_t = 16, double = 7,
         size_t = 2, size_t = 4);
 
     const cv::Mat&
     operator() (const cv::Mat&);
-
-    const cv::Mat&
-    mask () const {
-        return mask_;
-    }
 
 private:
     cv::Mat
@@ -104,13 +100,12 @@ private:
     compose_masks (const cv::Mat&, const cv::Mat&, size_t = 255);
 
 private:
-    cv::Mat background_, mask_;
     boost::circular_buffer< cv::Mat > history_;
 
     double lambda_;
     size_t lo_, hi_, frame_interval_, frame_counter_;
 };
 
-} // namespace bs
+}
 
 #endif // BS_TEMPORAL_MEDIAN_HPP

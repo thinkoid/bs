@@ -49,8 +49,8 @@ struct frames_range_data {
 struct frames_range : private frames_range_data, frames_range_base {
     explicit frames_range (cv::VideoCapture& vc)
         : frames_range_base (
-            frames_iterator { &vc, &mat_ },
-            frames_iterator { })
+              frames_iterator { &vc, &mat_ },
+              frames_iterator { })
     { }
 };
 
@@ -59,6 +59,6 @@ getframes_from (cv::VideoCapture& vc) {
     return frames_range { vc };
 }
 
-} // namespace bs
+}
 
 #endif // BS_FRAME_RANGE_HPP

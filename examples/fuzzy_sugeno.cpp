@@ -16,7 +16,7 @@ namespace std {
 template< typename T >
 std::ostream&
 operator<< (std::ostream& s, const std::vector< T >& v) {
-    copy (v.begin (), v.end (), ostream_iterator< T > (std::cout, ","));
+    copy (v.begin (), v.end (), ostream_iterator< T > (s, ","));
     return s;
 }
 
@@ -119,7 +119,7 @@ process_fuzzy_sugeno (cv::VideoCapture& cap, const options_t& opts) {
         const auto mask = fuzzy_sugeno (frame);
 
         if (display)
-            imshow ("Fuzzy Sugeno integral background subtraction", mask);
+            imshow ("Fuzzy Sugeno filter", mask);
 
         if (temp.wait_for_key (27))
             break;

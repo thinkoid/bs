@@ -204,7 +204,7 @@ const cv::Mat&
 fuzzy_sugeno_t::operator() (const cv::Mat& frame) {
     BS_ASSERT (3 == frame.channels ());
 
-    Mat fframe = convert (frame, CV_32F, 1./255);
+    Mat fframe = convert (convert_ohta (frame), CV_32F, 1./255);
 
     const auto F = detail::lbp (gray_from (fframe)) / 255.;
     const auto B = detail::lbp (gray_from (background_)) / 255.;

@@ -32,7 +32,6 @@ lbp (const cv::Mat& src) {
                 ((r [1] >= t) << 2) +
                 ((r [2] >= t) << 3);
 
-            BOOST_ASSERT (u < sizeof arr / sizeof *arr);
             s [0] = u;
         }
     }
@@ -42,7 +41,7 @@ lbp (const cv::Mat& src) {
 
 cv::Mat
 lbp (const cv::Mat& src) {
-    BOOST_ASSERT (1 == arg.channels ());
+    BOOST_ASSERT (1 == src.channels ());
 
     cv::Mat dst;
 

@@ -204,11 +204,10 @@ const cv::Mat&
 fuzzy_sugeno_t::operator() (const cv::Mat& frame) {
     BS_ASSERT (3 == frame.channels ());
 
-    Mat fframe (frame.size (), CV_32F);
-    frame.convertTo (fframe, CV_32F, 1. / 255);
+    Mat fframe = convert (frame, CV_32F, 1./255);
 
-    const auto F = detail::lbp (gray_from (fframe)) / 9;
-    const auto B = detail::lbp (gray_from (background_)) / 9;
+    const auto F = detail::lbp (gray_from (fframe)) / 255.;
+    const auto B = detail::lbp (gray_from (background_)) / 255.;
 
     const auto H = similarity1 (F, B);
     const auto I = similarity3 (fframe, background_);

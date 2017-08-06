@@ -25,6 +25,20 @@ scale_frame (cv::Mat& frame, double factor) {
 
 }
 
+inline cv::Mat
+border (const cv::Mat& src, size_t n = 1) {
+    cv::Mat dst;
+    cv::copyMakeBorder (
+        src, dst, n, n, n, n, cv::BORDER_CONSTANT, 0);
+    return dst;
+}
+
+inline cv::Mat
+unborder (const cv::Mat& src, size_t n = 1) {
+    return cv::Mat (
+        src (cv::Rect (n, n, src.cols - 2 * n, src.rows - 2 * n)));
+}
+
 inline std::pair< double, double >
 minmax (const cv::Mat& src) {
     double a, b;

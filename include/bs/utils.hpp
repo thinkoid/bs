@@ -75,9 +75,36 @@ multiply (const cv::Mat& lhs, const cv::Mat& rhs) {
 }
 
 inline cv::Mat
+convert_ohta (const cv::Mat& src) {
+    BS_ASSERT (src.type () == CV_8UC3);
+
+    cv::Mat dst (src.size (), src.type ());
+
+    for (size_t i = 0; i < src.total (); ++i) {
+        const auto& s = src.at< cv::Vec3b > (i);
+
+        auto& d = dst.at< cv::Vec3b > (i);
+
+        d [0] = cv::saturate_cast< unsigned char > ((s [0] + s [1] + s [2]) / 3.);
+        d [1] = cv::saturate_cast< unsigned char > ((s [2] - s [0]) / 2.);
+        d [2] = cv::saturate_cast< unsigned char > ((2 * s [1] - s [2] + s [0]) / 4.);
+    }
+
+    return dst;
+}
+
+constexpr int COLOR_BGR2OHTA = cv::COLOR_COLORCVT_MAX + 1;
+
+inline cv::Mat
 convert_color (const cv::Mat& src, int type) {
     cv::Mat dst;
-    return cv::cvtColor (src, dst, type), dst;
+
+    if (type == COLOR_BGR2OHTA)
+        return convert_ohta (src);
+    else {
+        cv::cvtColor (src, dst, type);
+        return dst;
+    }
 }
 
 inline int

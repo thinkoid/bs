@@ -54,3 +54,4 @@ stamp-h1
 test-driver
 tests/lbp_perf
 tests/threshold
+/examples/fuzzy_choquet

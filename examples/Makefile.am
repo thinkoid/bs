@@ -6,6 +6,7 @@ include $(top_srcdir)/Makefile.common
 
 bin_PROGRAMS =                                  \
     adaptive_median                             \
+    fuzzy_choquet                               \
     fuzzy_sugeno                                \
     sigma_delta                                 \
     temporal_median
@@ -13,6 +14,9 @@ bin_PROGRAMS =                                  \
 
 adaptive_median_SOURCES = adaptive_median.cpp options.cpp
 adaptive_median_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
+
+fuzzy_choquet_SOURCES = fuzzy_choquet.cpp options.cpp
+fuzzy_choquet_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 fuzzy_sugeno_SOURCES = fuzzy_sugeno.cpp options.cpp
 fuzzy_sugeno_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)

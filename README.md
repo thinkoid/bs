@@ -9,6 +9,10 @@ and OpenCV. See the [COPYING](COPYING) for license rights and limitations (BSD).
 
 It implements [1995McFarlane](#1995McFarlane). 
 
+### Fuzzy Choquet
+
+It implements [2008ElBaf](#2008ElBaf).
+
 ### Fuzzy Sugeno
 
 It implements [2006Zhang](#2006Zhang).
@@ -58,3 +62,8 @@ estimation." *Pattern Recognition Letters* 28.3 (2007): 320-328.
 <a name="2006Calderara">[2006Calderara]</a> Calderara, Simone, et al. "Reliable
 background suppression for complex scenes." *Proceedings of the 4th ACM
 international workshop on Video surveillance and sensor networks.* ACM, 2006.
+
+<a name="2008ElBaf">[2008ElBaf]</a> El Baf, Fida, Thierry Bouwmans, and Bertrand
+Vachon. "Fuzzy integral for moving object detection." Fuzzy
+Systems, 2008. *FUZZ-IEEE 2008.(IEEE World Congress on Computational
+Intelligence). IEEE International Conference on.* IEEE, 2008. 

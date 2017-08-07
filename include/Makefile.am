@@ -8,6 +8,7 @@ nobase_include_HEADERS =                        \
   bs/detail/threshold.hpp                       \
   bs/adaptive_median.hpp                        \
   bs/frame_range.hpp                            \
+  bs/fuzzy_choquet.hpp                          \
   bs/fuzzy_sugeno.hpp                           \
   bs/sigma_delta.hpp                            \
   bs/temporal_median.hpp                        \

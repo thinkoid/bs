@@ -1,12 +1,17 @@
 #include <iostream>
 
+#include <bs/ewma.hpp>
+#include <bs/frame_range.hpp>
+#include <bs/fuzzy_choquet.hpp>
+#include <bs/utils.hpp>
+
 #include <boost/make_shared.hpp>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
-#include <bs/frame_range.hpp>
-#include <bs/utils.hpp>
-#include <bs/fuzzy_choquet.hpp>
+#include <range/v3/front.hpp>
+#include <range/v3/action/take.hpp>
+#include <range/v3/view/take.hpp>
 
 #include <options.hpp>
 #include <run.hpp>
@@ -97,18 +102,35 @@ program_options_from (int& argc, char** argv) {
 
 ////////////////////////////////////////////////////////////////////////
 
+static cv::Mat
+bootstrap (cv::VideoCapture& cap) {
+    using namespace ranges;
+
+    //
+    // The bootstrapping function:
+    //
+    bs::ewma_t f;
+
+    //
+    // Learn the background over 15 frames:
+    //
+    auto frames = bs::getframes_from (cap);
+
+    for (auto frame : (frames | view::take (15))) {
+        f (bs::float_from (frame));
+    }
+
+    return f.value ();
+}
+
 static void
 process_fuzzy_choquet (cv::VideoCapture& cap, const options_t& opts) {
     const bool display = opts.have ("display");
 
-    bs::fuzzy_choquet_bootstrap_t fuzzy_choquet_bootstrap;
-
-    for (auto& frame : bs::getframes_from (cap))
-        if (fuzzy_choquet_bootstrap (frame))
-            break;
+    auto background_model = bootstrap (cap);
 
     bs::fuzzy_choquet_t fuzzy_choquet (
-        fuzzy_choquet_bootstrap.background (),
+        background_model,
         opts ["alpha"].as< double > (),
         opts ["threshold"].as< double > (),
         opts ["measure"].as< std::vector< double > > ());

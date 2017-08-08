@@ -21,27 +21,6 @@ namespace bs {
 // }
 //
 
-struct fuzzy_choquet_bootstrap_t {
-    explicit fuzzy_choquet_bootstrap_t (double = .1, size_t = 10UL);
-
-    bool operator() (const cv::Mat& frame) {
-        return 0 == frame_counter_ || process (frame);
-    }
-
-    cv::Mat background () const {
-        return background_;
-    }
-
-private:
-    bool
-    process (const cv::Mat&);
-
-private:
-    cv::Mat background_;
-    double alpha_;
-    size_t frame_counter_;
-};
-
 struct fuzzy_choquet_t : detail::base_t {
     explicit fuzzy_choquet_t (
         const cv::Mat&, double = .01, double = .67,

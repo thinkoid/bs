@@ -7,6 +7,7 @@ nobase_include_HEADERS =                        \
   bs/detail/lbp.hpp                             \
   bs/detail/threshold.hpp                       \
   bs/adaptive_median.hpp                        \
+  bs/ewma.hpp                                   \
   bs/frame_range.hpp                            \
   bs/fuzzy_choquet.hpp                          \
   bs/fuzzy_sugeno.hpp                           \

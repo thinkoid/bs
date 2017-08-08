@@ -18,7 +18,7 @@ OPENCV_LIBS =                                   \
     $(OPENCV_CORE_LIBS)
 
 AM_CPPFLAGS = -I. -I$(top_srcdir)/include       \
-    $(BOOST_CPPFLAGS) $(OPENCV_CPPFLAGS)
+    $(RANGE3_CPPFLAGS) $(BOOST_CPPFLAGS) $(OPENCV_CPPFLAGS)
 
 AM_LDFLAGS =                                    \
     $(BOOST_FILESYSTEM_LDFLAGS)                 \

@@ -69,6 +69,11 @@ median_blur (const cv::Mat& src, int size = 3) {
 }
 
 inline cv::Mat
+blur (const cv::Mat& src) {
+    return bs::median_blur (src);
+}
+
+inline cv::Mat
 multiply (const cv::Mat& lhs, const cv::Mat& rhs) {
     cv::Mat dst;
     return cv::multiply (lhs, rhs, dst), dst;

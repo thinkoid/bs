@@ -1,12 +1,17 @@
 #include <iostream>
 
+#include <bs/ewma.hpp>
+#include <bs/frame_range.hpp>
+#include <bs/fuzzy_sugeno.hpp>
+#include <bs/utils.hpp>
+
 #include <boost/make_shared.hpp>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
-#include <bs/frame_range.hpp>
-#include <bs/utils.hpp>
-#include <bs/fuzzy_sugeno.hpp>
+#include <range/v3/front.hpp>
+#include <range/v3/action/take.hpp>
+#include <range/v3/view/take.hpp>
 
 #include <options.hpp>
 #include <run.hpp>
@@ -28,7 +33,7 @@ operator<< (std::ostream& s, const std::vector< T >& v) {
 options_t::options_t (int argc, char** argv) {
     {
         auto tmp = std::make_pair (
-                       "program", po::variable_value (std::string (argv [0]), false));
+            "program", po::variable_value (std::string (argv [0]), false));
         map_.insert (tmp);
     }
 
@@ -97,18 +102,35 @@ program_options_from (int& argc, char** argv) {
 
 ////////////////////////////////////////////////////////////////////////
 
+static cv::Mat
+bootstrap (cv::VideoCapture& cap) {
+    using namespace ranges;
+
+    //
+    // The bootstrapping function:
+    //
+    bs::ewma_t f;
+
+    //
+    // Learn the background over 15 frames:
+    //
+    auto frames = bs::getframes_from (cap);
+
+    for (auto frame : (frames | view::take (15))) {
+        f (bs::float_from (frame));
+    }
+
+    return f.value ();
+}
+
 static void
 process_fuzzy_sugeno (cv::VideoCapture& cap, const options_t& opts) {
     const bool display = opts.have ("display");
 
-    bs::fuzzy_sugeno_bootstrap_t fuzzy_sugeno_bootstrap;
-
-    for (auto& frame : bs::getframes_from (cap))
-        if (fuzzy_sugeno_bootstrap (frame))
-            break;
+    auto background_model = bootstrap (cap);
 
     bs::fuzzy_sugeno_t fuzzy_sugeno (
-        fuzzy_sugeno_bootstrap.background (),
+        background_model,
         opts ["alpha"].as< double > (),
         opts ["threshold"].as< double > (),
         opts ["measure"].as< std::vector< double > > ());

@@ -77,7 +77,7 @@ BM_lbp (benchmark::State& state) {
     Mat src (state.range (0), state.range (0), CV_8U);
 
     while (state.KeepRunning ()) {
-        DoNotOptimize (bs::detail::lbp (src));
+        DoNotOptimize (bs::lbp (src));
     }
 };
 

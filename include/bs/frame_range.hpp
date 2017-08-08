@@ -4,7 +4,9 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-#include <boost/range/iterator_range.hpp>
+#include <boost/iterator/iterator_facade.hpp>
+
+#include <range/v3/iterator_range.hpp>
 
 namespace bs {
 
@@ -40,7 +42,7 @@ private:
     cv::Mat* pmat_;
 };
 
-using frames_range_base = boost::iterator_range< frames_iterator >;
+using frames_range_base = ranges::iterator_range< frames_iterator >;
 
 struct frames_range_data {
     cv::Mat mat_;

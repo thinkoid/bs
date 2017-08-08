@@ -1,6 +1,6 @@
 ## -*- mode: makefile -*-
 
-EXTRA_DIST = 
+EXTRA_DIST = fuzzy_integral.hpp
 
 include $(top_srcdir)/Makefile.common
 

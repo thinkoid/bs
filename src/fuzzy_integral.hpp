@@ -151,10 +151,8 @@ update_background (const Mat& F, const Mat& B, const Mat& S, float alpha)
 {
     Mat result (F.size (), CV_32FC3, Scalar (0));
 
-    double max_, min_;
+    double min_, max_;
     std::tie (min_, max_) = bs::minmax (S);
-
-    BS_ASSERT (min_ >= 0. && max_ >= 0. && 1.0 >= min_ && 1.0 >= max_);
 
     for (size_t i = 0; i < F.total (); ++i) {
         auto& dst = result.at< Vec3f > (i);

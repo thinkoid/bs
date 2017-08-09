@@ -11,11 +11,18 @@ It implements [1995McFarlane](#1995McFarlane).
 
 ### Fuzzy Choquet
 
-It implements [2008ElBaf](#2008ElBaf).
+It implements [2008ElBaf](#2008ElBaf). It applies the Choquet integral for each pixel of
+the image, to a triple of floating point values that represent:
+
+- similarity between foreground and background LBP at that point, and
+- similarity between two color planes of foreground and background, respectively.
+
+where the color planes are notably not RGB (Choquet uses YCrCb).
 
 ### Fuzzy Sugeno
 
-It implements [2006Zhang](#2006Zhang).
+It implements [2006Zhang](#2006Zhang). Like above, but it uses a Sugeno integral in Ohta
+colorspace.
 
 ### Sigma-Delta
 

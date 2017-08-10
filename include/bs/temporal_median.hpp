@@ -12,6 +12,8 @@
 namespace bs {
 
 //
+// Mostly based on the algorithm described in:
+//
 // @inproceedings{Calderara:2006:RBS:1178782.1178814,
 //  author = {Calderara, Simone and Melli, Rudy and Prati, Andrea and Cucchiara,
 //  Rita},
@@ -34,75 +36,22 @@ namespace bs {
 // }
 //
 
-struct temporal_median_bootstrap_t {
-    explicit temporal_median_bootstrap_t (
-        size_t block_size = 16,
-        size_t threshold = 15,
-        size_t threshold_increment = 15,
-        size_t motionthreshold = 5,
-        size_t stablethreshold = 10,
-        size_t thrash_limit = 2);
-
-    bool operator() (const cv::Mat& frame) {
-        return complete_ || process (frame);
-    }
-
-    cv::Mat background () const {
-        return background_;
-    }
-
-private:
-    bool
-    initialize_background_from (const cv::Mat&);
-
-    bool
-    update_background_from (const cv::Mat&);
-
-    bool
-    process (const cv::Mat&);
-
-    struct block {
-        size_t x, y, w, h;
-        size_t updates, motionthreshold;
-        bool stable;
-    };
-
-private:
-    cv::Mat background_;
-
-    boost::circular_buffer< cv::Mat > framebuf_;
-
-    std::vector< block > blocks_;
-
-    size_t block_size_;
-    size_t threshold_, threshold_increment_;
-    size_t motionthreshold_, stablethreshold_;
-    size_t thrashed_frames_, thrash_limit_;
-    int init_, complete_;
-};
-
 struct temporal_median_t : detail::base_t {
     explicit temporal_median_t (
-        const cv::Mat&, size_t = 9, size_t = 16, double = 7,
-        size_t = 2, size_t = 4);
+        const cv::Mat&, size_t = 9, size_t = 16, size_t = 30, size_t = 60);
 
     const cv::Mat&
     operator() (const cv::Mat&);
 
 private:
     cv::Mat
-    threshold (const cv::Mat&, const cv::Mat&, size_t = 255);
-
-    std::tuple< cv::Mat, cv::Mat, cv::Mat >
-    calculate_masks () const;
+    calculate_median () const;
 
     cv::Mat
-    compose_masks (const cv::Mat&, const cv::Mat&, size_t = 255);
+    merge_masks (const cv::Mat&, const cv::Mat&);
 
 private:
     boost::circular_buffer< cv::Mat > history_;
-
-    double lambda_;
     size_t lo_, hi_, frame_interval_, frame_counter_;
 };
 

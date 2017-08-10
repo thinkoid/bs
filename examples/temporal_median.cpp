@@ -1,12 +1,17 @@
 #include <iostream>
 
+#include <bs/ewma.hpp>
+#include <bs/frame_range.hpp>
+#include <bs/utils.hpp>
+#include <bs/temporal_median.hpp>
+
 #include <boost/make_shared.hpp>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
-#include <bs/frame_range.hpp>
-#include <bs/utils.hpp>
-#include <bs/temporal_median.hpp>
+#include <range/v3/front.hpp>
+#include <range/v3/action/take.hpp>
+#include <range/v3/view/take.hpp>
 
 #include <options.hpp>
 #include <run.hpp>
@@ -85,21 +90,37 @@ program_options_from (int& argc, char** argv) {
 
 ////////////////////////////////////////////////////////////////////////
 
+static cv::Mat
+bootstrap (cv::VideoCapture& cap) {
+    using namespace ranges;
+
+    //
+    // The bootstrapping function:
+    //
+    bs::ewma_t f;
+
+    //
+    // Learn the background over 15 frames:
+    //
+    auto frames = bs::getframes_from (cap);
+
+    for (auto frame : (frames | view::take (15))) {
+        f (bs::scale_frame (frame));
+    }
+
+    return f.value ();
+}
+
 static void
 process_temporal_median_background (cv::VideoCapture& cap, const options_t& opts) {
     const bool display = opts.have ("display");
 
-    bs::temporal_median_bootstrap_t temporal_median_bootstrap;
-
-    for (auto& frame : bs::getframes_from (cap))
-        if (temporal_median_bootstrap (bs::scale_frame (frame)))
-            break;
+    auto background_model = bootstrap (cap);
 
     bs::temporal_median_t temporal_median (
-        temporal_median_bootstrap.background (),
+        background_model,
         opts ["history-size" ].as< size_t > (),
         opts ["frame-interval" ].as< size_t > (),
-        opts ["lambda" ].as< double > (),
         opts ["lo" ].as< size_t > (),
         opts ["hi" ].as< size_t > ());
 

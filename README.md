@@ -30,7 +30,8 @@ It implements [2007Manzanera](#2007Manzanera).
 
 ### Temporal Median
 
-It implements [2006Calderara](#2006Calderara).
+It implements and approximation of [2006Calderara](#2006Calderara). The
+divergence is in the use of a simpler pair of masks, with global thresholds.
 
 ## Utilities
 

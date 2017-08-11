@@ -17,7 +17,7 @@ the image, to a triple of floating point values that represent:
 - similarity between foreground and background LBP at that point, and
 - similarity between two color planes of foreground and background, respectively.
 
-where the color planes are notably not RGB (Choquet uses YCrCb).
+where the color planes are notably not RGB (the paper uses YCrCb).
 
 ### Fuzzy Sugeno
 

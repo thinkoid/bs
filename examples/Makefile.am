@@ -9,6 +9,7 @@ bin_PROGRAMS =                                  \
     fuzzy_choquet                               \
     fuzzy_sugeno                                \
     sigma_delta                                 \
+    simple_gaussian                             \
     temporal_median
 
 
@@ -23,6 +24,9 @@ fuzzy_sugeno_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 sigma_delta_SOURCES = sigma_delta.cpp options.cpp
 sigma_delta_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
+
+simple_gaussian_SOURCES = simple_gaussian.cpp options.cpp
+simple_gaussian_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 temporal_median_SOURCES = temporal_median.cpp options.cpp
 temporal_median_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)

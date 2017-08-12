@@ -12,4 +12,5 @@ libbs_la_SOURCES =                              \
   fuzzy_sugeno.cpp                              \
   lbp.cpp                                       \
   sigma_delta.cpp                               \
+  simple_gaussian.cpp                           \
   temporal_median.cpp

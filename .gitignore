@@ -55,3 +55,4 @@ test-driver
 tests/lbp_perf
 tests/threshold
 /examples/fuzzy_choquet
+/examples/simple_gaussian

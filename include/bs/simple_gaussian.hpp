@@ -11,8 +11,7 @@
 namespace bs {
 
 struct simple_gaussian_t : detail::base_t {
-    explicit simple_gaussian_t (
-        const cv::Mat&, double = .0001, double = .25, double = .67);
+    explicit simple_gaussian_t (const cv::Mat&, float = .0001, float = .25);
 
 public:
     const cv::Mat&
@@ -20,7 +19,7 @@ public:
 
 private:
     cv::Mat m_, v_;
-    float alpha_, threshold_, noise_;
+    float alpha_, threshold_;
 };
 
 }

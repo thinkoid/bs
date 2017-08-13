@@ -58,6 +58,11 @@ float_from (const cv::Mat& src, double scale = 1. / 255, double offset = 0.) {
 }
 
 inline cv::Mat
+double_from (const cv::Mat& src, double scale = 1. / 255, double offset = 0.) {
+    return convert (src, CV_64F, scale, offset);
+}
+
+inline cv::Mat
 mono_from (const cv::Mat& src, double scale = 255., double offset = 0.) {
     return convert (src, CV_8U, scale, offset);
 }

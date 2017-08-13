@@ -10,10 +10,10 @@ namespace bs {
 
 /* explicit */
 simple_gaussian_t::simple_gaussian_t (
-    const cv::Mat& b, double a, double t, double n)
+    const cv::Mat& b, float a, float t)
     : detail::base_t (b, { b.size (), CV_8U, cv::Scalar (0) }),
-      m_ (bs::float_from (b)), v_ (b.size (), CV_32FC3, { n, n, n }),
-      alpha_ (a), threshold_ (t), noise_ (n)
+      m_ (bs::float_from (b)), v_ (b.size (), CV_32FC3, { .6, .6, .6 }),
+      alpha_ (a), threshold_ (t * t)
 { }
 
 const cv::Mat&
@@ -28,21 +28,21 @@ simple_gaussian_t::operator() (const cv::Mat& frame) {
         auto& m = m_.at< cv::Vec3f > (i);
         auto& v = v_.at< cv::Vec3f > (i);
 
-        double a, b, c;
+        float a, b, c;
 
         a = src [0] - m [0];
         b = src [1] - m [1];
         c = src [2] - m [2];
 
         //
-        // Mahalanobis distance:
+        // Squared normalized Euclidean distance:
         //
-        double squared_distance =
+        const float distance =
             a * a / v [0] +
             b * b / v [1] +
             c * c / v [2];
 
-        mask_.at< unsigned char > (i) = squared_distance > threshold_ ? 255 : 0;
+        mask_.at< unsigned char > (i) = distance > threshold_ ? 255 : 0;
 
         //
         // Rolling mean and variance:
@@ -54,20 +54,12 @@ simple_gaussian_t::operator() (const cv::Mat& frame) {
             m += inc;
 
             v = (1 - alpha_) * (v + mul (diff, inc));
-
-            v [0] = (std::min) (v [0], noise_);
-            v [1] = (std::min) (v [1], noise_);
-            v [2] = (std::min) (v [2], noise_);
         }
 
         //
         // Update the background:
         //
-        auto& bg = background_.at< cv::Vec3b > (i);
-
-        bg [0] = cv::saturate_cast< unsigned char > (m [0] * 255);
-        bg [1] = cv::saturate_cast< unsigned char > (m [1] * 255);
-        bg [2] = cv::saturate_cast< unsigned char > (m [2] * 255);
+        background_.at< cv::Vec3b > (i) = cv::Vec3b (m * 255);
     }
 
     return mask_;

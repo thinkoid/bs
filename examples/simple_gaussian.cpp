@@ -43,10 +43,7 @@ options_t::options_t (int argc, char** argv) {
      "Learning alpha.")
 
     ("threshold,t", po::value< double > ()->default_value (.25),
-     "Mahalanobis distance threshold.")
-
-    ("noise,n", po::value< double > ()->default_value (.67),
-     "Maximum noise.");
+     "Threshold of normalized Euclidean distance from pixel mean.");
 
     desc_ = boost::make_shared< po::options_description > ();
 
@@ -114,8 +111,7 @@ process_simple_gaussian (cv::VideoCapture& cap, const options_t& opts) {
     bs::simple_gaussian_t simple_gaussian (
         background_model,
         opts ["alpha"].as< double > (),
-        opts ["threshold"].as< double > (),
-        opts ["noise"].as< double > ());
+        opts ["threshold"].as< double > ());
 
     for (auto& frame : bs::getframes_from (cap)) {
         bs::frame_delay temp { 0 };

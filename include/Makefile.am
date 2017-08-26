@@ -11,6 +11,7 @@ nobase_include_HEADERS =                        \
   bs/frame_range.hpp                            \
   bs/fuzzy_choquet.hpp                          \
   bs/fuzzy_sugeno.hpp                           \
+  bs/grimson_gmm.hpp                            \
   bs/sigma_delta.hpp                            \
   bs/simple_gaussian.hpp                        \
   bs/temporal_median.hpp                        \

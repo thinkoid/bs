@@ -56,3 +56,4 @@ tests/lbp_perf
 tests/threshold
 /examples/fuzzy_choquet
 /examples/simple_gaussian
+/examples/grimson_gmm

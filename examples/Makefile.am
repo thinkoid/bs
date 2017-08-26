@@ -8,6 +8,7 @@ bin_PROGRAMS =                                  \
     adaptive_median                             \
     fuzzy_choquet                               \
     fuzzy_sugeno                                \
+    grimson_gmm                                 \
     sigma_delta                                 \
     simple_gaussian                             \
     temporal_median
@@ -21,6 +22,9 @@ fuzzy_choquet_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 fuzzy_sugeno_SOURCES = fuzzy_sugeno.cpp options.cpp
 fuzzy_sugeno_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
+
+grimson_gmm_SOURCES = grimson_gmm.cpp options.cpp
+grimson_gmm_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 sigma_delta_SOURCES = sigma_delta.cpp options.cpp
 sigma_delta_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)

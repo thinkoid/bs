@@ -150,6 +150,13 @@ scale_frame (cv::Mat& src, size_t to = 512) {
 }
 
 inline cv::Mat
+resize_frame (cv::Mat& src, double factor) {
+    cv::Mat dst;
+    cv::resize (src, dst, cv::Size (), factor, factor, cv::INTER_LINEAR);
+    return dst;
+}
+
+inline cv::Mat
 threshold (const cv::Mat& src, double threshold_ = 1., double maxval = 255.,
            int type = cv::THRESH_BINARY) {
     cv::Mat dst;

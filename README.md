@@ -9,6 +9,11 @@ and OpenCV. See the [COPYING](COPYING) for license rights and limitations (BSD).
 
 It implements [1995McFarlane](#1995McFarlane). 
 
+### Grimson Mixture of Gaussians
+
+Presented in [1999Grimson](#1999Grimson). The implementation is precisely following the
+description in the paper.
+
 ### Fuzzy Choquet
 
 It implements [2008ElBaf](#2008ElBaf). It applies the Choquet integral for each pixel of
@@ -75,3 +80,8 @@ international workshop on Video surveillance and sensor networks.* ACM, 2006.
 Vachon. "Fuzzy integral for moving object detection." Fuzzy
 Systems, 2008. *FUZZ-IEEE 2008.(IEEE World Congress on Computational
 Intelligence). IEEE International Conference on.* IEEE, 2008. 
+
+<a name="1999Grimson">[1999Grimson]</a> Stauffer, Chris, and W. Eric
+L. Grimson. "Adaptive background mixture models for real-time tracking."
+Computer Vision and Pattern Recognition, 1999. *IEEE Computer Society Conference
+on.* Vol. 2. IEEE, 1999. 

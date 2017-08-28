@@ -21,12 +21,12 @@ namespace bs {
 /* explicit */
 grimson_gmm_t::grimson_gmm_t (
     size_t n, double alpha, double variance_threshold, double variance,
-    double default_background_threshold)
+    double background_threshold)
     : size_ (n),
       alpha_ (alpha),
       variance_threshold_ (variance_threshold),
       variance_ (variance),
-      background_threshold_ (default_background_threshold)
+      background_threshold_ (background_threshold)
 { }
 
 const cv::Mat&

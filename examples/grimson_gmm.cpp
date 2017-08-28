@@ -13,6 +13,9 @@ namespace po = boost::program_options;
 #include <range/v3/action/take.hpp>
 #include <range/v3/view/take.hpp>
 
+#include <opencv2/highgui.hpp>
+using namespace cv;
+
 #include <options.hpp>
 #include <run.hpp>
 
@@ -101,13 +104,21 @@ process_grimson_gmm (cv::VideoCapture& cap, const options_t& opts) {
         opts ["variance"].as< double > (),
         opts ["background-threshold"].as< double > ());
 
+    namedWindow ("Grimson GMM");
+    namedWindow ("Grimson GMM background");
+
+    moveWindow ("Grimson GMM", 0, 0);
+    moveWindow ("Grimson GMM background", 512, 0);
+
     for (auto& frame : bs::getframes_from (cap)) {
         bs::frame_delay temp { 0 };
 
         auto src = bs::resize_frame (frame, 512. / frame.cols);
 
-        if (display)
-            imshow ("Simple Grimson Multi-Gaussian filter", grimson_gmm (src));
+        if (display) {
+            imshow ("Grimson GMM", grimson_gmm (src));
+            imshow ("Grimson GMM background", grimson_gmm.background ());
+        }
 
         if (temp.wait_for_key (27))
             break;

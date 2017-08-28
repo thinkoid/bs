@@ -45,6 +45,8 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                 variance_, 1., 1. / sqrt (variance_), frame.at< cv::Vec3b > (i)
             });
         }
+
+        background_ = frame.clone ();
     }
     else {
         for (size_t i = 0; i < frame.total (); ++i) {
@@ -81,6 +83,7 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                     // If the distance is close enough to any one distribution
                     // that models the background:
                     //
+                    background_.at< cv::Vec3b > (i) = gs [0].m;
                     mask_.at< unsigned char > (i) = 0;
                 }
 

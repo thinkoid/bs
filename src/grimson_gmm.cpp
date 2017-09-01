@@ -18,6 +18,11 @@ euclidean_distance (const cv::Vec3b& x, const cv::Vec3b& y) {
 
 namespace bs {
 
+inline grimson_gmm_t::gaussian_t
+grimson_gmm_t::default_gaussian (const cv::Vec3b& arg) {
+    return gaussian_t { variance_, 1., 1. / sqrt (variance_), arg };
+}
+
 /* explicit */
 grimson_gmm_t::grimson_gmm_t (
     size_t n, double alpha, double variance_threshold, double variance,
@@ -36,14 +41,10 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
     if (g_.empty ()) {
         g_.resize (frame.total ());
 
-        for (size_t i = 0; i < frame.total (); ++i) {
+        for (size_t i = 0; i < g_.size (); ++i) {
             auto& g = g_ [i];
-
             g.reserve (size_);
-
-            g.resize (1U, gaussian_t {
-                variance_, 1., 1. / sqrt (variance_), frame.at< cv::Vec3b > (i)
-            });
+            g.resize (1UL, default_gaussian (frame.at< cv::Vec3b > (i)));
         }
 
         background_ = frame.clone ();
@@ -67,7 +68,7 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                 sum += gs [n].w;
             }
 
-            bool matched = false;
+            int once = 0;
 
             for (size_t j = 0; j < gs.size (); ++j) {
                 auto& g = gs [j];
@@ -78,20 +79,15 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
 
                 const auto distance = euclidean_distance (src, m);
 
-                if (j < n && distance < variance_threshold_) {
-                    //
-                    // If the distance is close enough to any one distribution
-                    // that models the background:
-                    //
-                    background_.at< cv::Vec3b > (i) = gs [0].m;
-                    mask_.at< unsigned char > (i) = 0;
-                }
-
-                if (!matched && distance < variance_threshold_) {
-                    //
-                    // Match at most one distribution:
-                    //
-                    matched = true;
+                if (!once && distance < variance_threshold_ * v && ++once) {
+                    if (j < n) {
+                        //
+                        // If the distance is close enough to a distribution
+                        // that models the background:
+                        //
+                        mask_.at< unsigned char > (i) = 0;
+                        background_.at< cv::Vec3b > (i) = gs [0].m;
+                    }
 
                     const double r = alpha_ * w;
 
@@ -111,7 +107,7 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                 }
             }
 
-            if (!matched) {
+            if (!once) {
                 //
                 // No matching will create a new distribution or replace the
                 // weakest (least probable):

@@ -42,19 +42,19 @@ options_t::options_t (int argc, char** argv) {
     ("input,i", po::value< std::string > ()->default_value ("0"),
      "input (file or stream index).")
 
-    ("size,s", po::value< size_t > ()->default_value (4),
+    ("size,s", po::value< size_t > ()->default_value (4UL),
      "maximum number of distributions.")
 
     ("alpha,a", po::value< double > ()->default_value (.005),
      "learning alpha.")
 
-    ("threshold,t", po::value< double > ()->default_value (3000.),
+    ("threshold,t", po::value< double > ()->default_value (50.),
      "variance threshold for matching a distribution.")
 
-    ("variance,v", po::value< double > ()->default_value (100.),
+    ("variance,v", po::value< double > ()->default_value (16.),
      "default variance for new distributions.")
 
-    ("background-threshold,b", po::value< double > ()->default_value (.9),
+    ("background-threshold,b", po::value< double > ()->default_value (.7),
      "maximum weight (probability) for likely background distributions.");
 
     desc_ = boost::make_shared< po::options_description > ();

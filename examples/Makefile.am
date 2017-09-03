@@ -11,7 +11,8 @@ bin_PROGRAMS =                                  \
     grimson_gmm                                 \
     sigma_delta                                 \
     simple_gaussian                             \
-    temporal_median
+    temporal_median                             \
+    zivkovic_gmm
 
 
 adaptive_median_SOURCES = adaptive_median.cpp options.cpp
@@ -34,3 +35,6 @@ simple_gaussian_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 temporal_median_SOURCES = temporal_median.cpp options.cpp
 temporal_median_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
+
+zivkovic_gmm_SOURCES = zivkovic_gmm.cpp options.cpp
+zivkovic_gmm_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)

@@ -15,4 +15,5 @@ nobase_include_HEADERS =                        \
   bs/sigma_delta.hpp                            \
   bs/simple_gaussian.hpp                        \
   bs/temporal_median.hpp                        \
+  bs/zivkovic_gmm.hpp                           \
   bs/utils.hpp

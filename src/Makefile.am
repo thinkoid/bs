@@ -14,4 +14,5 @@ libbs_la_SOURCES =                              \
   lbp.cpp                                       \
   sigma_delta.cpp                               \
   simple_gaussian.cpp                           \
-  temporal_median.cpp
+  temporal_median.cpp                           \
+  zivkovic_gmm.cpp

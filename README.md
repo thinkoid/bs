@@ -14,6 +14,12 @@ It implements [1995McFarlane](#1995McFarlane).
 Presented in [1999Grimson](#1999Grimson). The implementation is precisely following the
 description in the paper.
 
+### Zivkovic Mixture of Gaussians
+
+As presented in [2004Zivkovic](#2004Zivkovic). It slightly differs from Zivkovic
+implementation in using just one threshold for testing matching to a
+distribution.
+
 ### Fuzzy Choquet
 
 It implements [2008ElBaf](#2008ElBaf). It applies the Choquet integral for each pixel of
@@ -85,3 +91,8 @@ Intelligence). IEEE International Conference on.* IEEE, 2008.
 L. Grimson. "Adaptive background mixture models for real-time tracking."
 Computer Vision and Pattern Recognition, 1999. *IEEE Computer Society Conference
 on.* Vol. 2. IEEE, 1999. 
+
+<a name="2004Zivkovic">[2004Zivkovic]</a> Zivkovic, Zoran. "Improved adaptive
+Gaussian mixture model for background subtraction." Pattern
+Recognition, 2004. ICPR 2004. *Proceedings of the 17th International Conference
+on.* Vol. 2. IEEE, 2004. 

@@ -26,12 +26,12 @@ grimson_gmm_t::default_gaussian (const cv::Vec3b& arg) {
 /* explicit */
 grimson_gmm_t::grimson_gmm_t (
     size_t n, double alpha, double variance_threshold, double variance,
-    double background_threshold)
+    double weight_threshold)
     : size_ (n),
       alpha_ (alpha),
       variance_threshold_ (variance_threshold),
       variance_ (variance),
-      background_threshold_ (background_threshold)
+      weight_threshold_ (weight_threshold)
 { }
 
 const cv::Mat&
@@ -64,7 +64,7 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
             size_t n = 0;
 
             for (double sum = 0.;
-                 n < gs.size () && sum < background_threshold_; ++n) {
+                 n < gs.size () && sum < weight_threshold_; ++n) {
                 sum += gs [n].w;
             }
 

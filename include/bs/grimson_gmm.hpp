@@ -27,7 +27,7 @@ struct grimson_gmm_t : detail::base_t {
     static constexpr auto default_alpha = .005;
     static constexpr auto default_variance = 16.;
     static constexpr auto default_variance_threshold = 15.;
-    static constexpr auto default_background_threshold = .7;
+    static constexpr auto default_weight_threshold = .7;
 
 public:
     explicit grimson_gmm_t (
@@ -35,7 +35,7 @@ public:
         double = default_alpha,
         double = default_variance_threshold,
         double = default_variance,
-        double = default_background_threshold);
+        double = default_weight_threshold);
 
 public:
     const cv::Mat&
@@ -52,7 +52,7 @@ private:
 
 private:
     size_t size_;
-    double alpha_, variance_threshold_, variance_, background_threshold_;
+    double alpha_, variance_threshold_, variance_, weight_threshold_;
     std::vector< std::vector< gaussian_t > > g_;
 };
 

@@ -33,8 +33,8 @@ options_t::options_t (int argc, char** argv) {
     po::options_description config ("Configuration options");
 
     generic.add_options ()
-    ("version,v", "version")
-    ("help,h", "this");
+    ("version", "version")
+    ("help", "this");
 
     config.add_options ()
     ("display,d", "display frames.")
@@ -54,7 +54,7 @@ options_t::options_t (int argc, char** argv) {
     ("variance,v", po::value< double > ()->default_value (16.),
      "default variance for new distributions.")
 
-    ("background-threshold,b", po::value< double > ()->default_value (.7),
+    ("weight-threshold,b", po::value< double > ()->default_value (.7),
      "maximum weight (probability) for likely background distributions.");
 
     desc_ = boost::make_shared< po::options_description > ();
@@ -102,7 +102,7 @@ process_grimson_gmm (cv::VideoCapture& cap, const options_t& opts) {
         opts ["alpha"].as< double > (),
         opts ["threshold"].as< double > (),
         opts ["variance"].as< double > (),
-        opts ["background-threshold"].as< double > ());
+        opts ["weight-threshold"].as< double > ());
 
     namedWindow ("Grimson GMM");
     namedWindow ("Grimson GMM background");

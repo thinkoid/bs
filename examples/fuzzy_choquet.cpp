@@ -41,8 +41,8 @@ options_t::options_t (int argc, char** argv) {
     po::options_description config ("Configuration options");
 
     generic.add_options ()
-    ("version,v", "version")
-    ("help,h", "this");
+    ("version", "version")
+    ("help", "this");
 
     config.add_options ()
     ("display,d", "display frames.")

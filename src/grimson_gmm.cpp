@@ -9,7 +9,7 @@ using namespace std;
 namespace {
 
 inline double
-euclidean_distance (const cv::Vec3b& x, const cv::Vec3b& y) {
+euclidean_distance (const cv::Vec3b& x, const cv::Vec3d& y) {
     const double a = x [0] - y [0], b = x [1] - y [1], c = x [2] - y [2];
     return a * a + b * b + c * c;
 }

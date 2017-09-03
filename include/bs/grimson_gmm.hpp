@@ -23,10 +23,10 @@ namespace bs {
 //
 
 struct grimson_gmm_t : detail::base_t {
-    static constexpr auto default_modes = 3.;
+    static constexpr auto default_modes = 4.;
     static constexpr auto default_alpha = .005;
-    static constexpr auto default_variance = 50.;
-    static constexpr auto default_variance_threshold = 16.;
+    static constexpr auto default_variance = 16.;
+    static constexpr auto default_variance_threshold = 12.;
     static constexpr auto default_background_threshold = .7;
 
 public:
@@ -44,7 +44,7 @@ public:
 private:
     struct gaussian_t {
         double v, w, s;
-        cv::Vec3b m;
+        cv::Vec3d m;
     };
 
     gaussian_t

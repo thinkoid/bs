@@ -26,7 +26,7 @@ struct grimson_gmm_t : detail::base_t {
     static constexpr auto default_modes = 4.;
     static constexpr auto default_alpha = .005;
     static constexpr auto default_variance = 16.;
-    static constexpr auto default_variance_threshold = 12.;
+    static constexpr auto default_variance_threshold = 15.;
     static constexpr auto default_background_threshold = .7;
 
 public:

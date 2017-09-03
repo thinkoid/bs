@@ -48,7 +48,7 @@ options_t::options_t (int argc, char** argv) {
     ("alpha,a", po::value< double > ()->default_value (.005),
      "learning alpha.")
 
-    ("threshold,t", po::value< double > ()->default_value (12.),
+    ("threshold,t", po::value< double > ()->default_value (15.),
      "variance threshold for matching a distribution.")
 
     ("variance,v", po::value< double > ()->default_value (16.),

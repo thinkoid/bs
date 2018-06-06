@@ -68,10 +68,10 @@ sigma_delta_t::operator() (const cv::Mat& frame) {
     //
     // V_t = max(min(Vmax, V_t), Vmin)
     //
-    v_ = threshold (v_, Vmax_, 0, CV_THRESH_TRUNC);
+    v_ = threshold (v_, Vmax_, 0, cv::THRESH_TRUNC);
 
     v_ = q_ - v_;
-    v_ = threshold (v_, 255 - Vmin_, 0, CV_THRESH_TRUNC);
+    v_ = threshold (v_, 255 - Vmin_, 0, cv::THRESH_TRUNC);
 
     v_ = q_ - v_;
 

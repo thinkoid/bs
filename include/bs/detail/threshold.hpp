@@ -140,19 +140,19 @@ template< typename T >
 inline cv::Mat
 threshold (const cv::Mat& src, T threshold_, T value, int type) {
     switch (type) {
-    case CV_THRESH_BINARY:
+    case cv::THRESH_BINARY:
         return threshold (src, threshold_binary< T > (threshold_, value));
 
-    case CV_THRESH_BINARY_INV:
+    case cv::THRESH_BINARY_INV:
         return threshold (src, threshold_binary_inv< T > (threshold_, value));
 
-    case CV_THRESH_TRUNC:
+    case cv::THRESH_TRUNC:
         return threshold (src, threshold_trunc< T > (threshold_, value));
 
-    case CV_THRESH_TOZERO:
+    case cv::THRESH_TOZERO:
         return threshold (src, threshold_tozero< T > (threshold_, value));
 
-    case CV_THRESH_TOZERO_INV:
+    case cv::THRESH_TOZERO_INV:
         return threshold (src, threshold_tozero_inv< T > (threshold_, value));
 
     default:

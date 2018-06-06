@@ -24,7 +24,8 @@ const cv::Mat&
 fuzzy_choquet_t::operator() (const cv::Mat& frame) {
     BS_ASSERT (3 == frame.channels ());
 
-    Mat fframe = convert (convert_color (frame, CV_BGR2YCrCb), CV_32F, 1./255);
+    Mat fframe = convert (
+        convert_color (frame, cv::COLOR_BGR2YCrCb), CV_32F, 1./255);
 
     const auto F = lbp (gray_from (fframe)) / 255.;
     const auto B = lbp (gray_from (background_)) / 255.;

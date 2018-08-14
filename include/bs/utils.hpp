@@ -194,7 +194,7 @@ struct frame_delay {
         using namespace std::chrono;
 
         int passed = duration_cast< milliseconds > (
-                         high_resolution_clock::now () - begin_).count ();
+            high_resolution_clock::now () - begin_).count ();
 
         int remaining = value_ - passed;
 

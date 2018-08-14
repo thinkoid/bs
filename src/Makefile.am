@@ -8,6 +8,7 @@ lib_LTLIBRARIES = libbs.la
 
 libbs_la_SOURCES =                              \
   adaptive_median.cpp                           \
+  fgmm_um.cpp                                   \
   fuzzy_choquet.cpp                             \
   fuzzy_sugeno.cpp                              \
   grimson_gmm.cpp                               \

@@ -31,6 +31,7 @@ depot
 examples/adaptive_learning
 examples/adaptive_median
 examples/adaptive_selective_learning
+examples/fgmm_um
 examples/fuzzy_sugeno
 examples/moving_mean
 examples/null

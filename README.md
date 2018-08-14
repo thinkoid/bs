@@ -7,7 +7,7 @@ and OpenCV. See the [COPYING](COPYING) for license rights and limitations (BSD).
 
 ### Adaptive Median
 
-It implements [1995McFarlane](#1995McFarlane). 
+It implements [1995McFarlane](#1995McFarlane).
 
 ### Grimson Mixture of Gaussians
 
@@ -19,6 +19,12 @@ description in the paper.
 As presented in [2004Zivkovic](#2004Zivkovic). It slightly differs from Zivkovic
 implementation in using just one threshold for testing matching to a
 distribution.
+
+### Type-2 Fuzzy Mixture of Gaussians
+
+As presented in [2008ElBaf-2](#2008ElBaf-2). The difference from other mixtures
+of Gaussians is in the use of a fuzzy-logic function to estimate the membership
+to a Gaussian distribution.
 
 ### Fuzzy Choquet
 
@@ -85,14 +91,19 @@ international workshop on Video surveillance and sensor networks.* ACM, 2006.
 <a name="2008ElBaf">[2008ElBaf]</a> El Baf, Fida, Thierry Bouwmans, and Bertrand
 Vachon. "Fuzzy integral for moving object detection." Fuzzy
 Systems, 2008. *FUZZ-IEEE 2008.(IEEE World Congress on Computational
-Intelligence). IEEE International Conference on.* IEEE, 2008. 
+Intelligence). IEEE International Conference on.* IEEE, 2008.
 
 <a name="1999Grimson">[1999Grimson]</a> Stauffer, Chris, and W. Eric
 L. Grimson. "Adaptive background mixture models for real-time tracking."
 Computer Vision and Pattern Recognition, 1999. *IEEE Computer Society Conference
-on.* Vol. 2. IEEE, 1999. 
+on.* Vol. 2. IEEE, 1999.
 
-<a name="2004Zivkovic">[2004Zivkovic]</a> Zivkovic, Zoran. "Improved adaptive
+ <a name="2004Zivkovic">[2004Zivkovic]</a> Zivkovic, Zoran. "Improved adaptive
 Gaussian mixture model for background subtraction." Pattern
 Recognition, 2004. ICPR 2004. *Proceedings of the 17th International Conference
-on.* Vol. 2. IEEE, 2004. 
+on.* Vol. 2. IEEE, 2004.
+
+<a name="2008ElBaf-2">[2008ElBaf-2]</a> Fida El Baf, Thierry Bouwmans, Bertrand
+Vachon.  Type-2 Fuzzy Mixture of Gaussians Model: Application to Background
+Modeling.  G.  Bebis et al.  (Eds).  ISVC 2008, Dec 2008, Las Vegas, United
+States. Springer-Verlag, LNCS 5358 (Part I.), pp.772-781, 2008.

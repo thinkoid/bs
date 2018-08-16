@@ -9,15 +9,25 @@ using namespace std;
 namespace {
 
 static inline double
-euclidean_norm (const cv::Vec3d& x) {
-    return sqrt (x [0] * x [0] + x [1] * x [1] + x [2] * x [2]);
+dot (const cv::Vec3d& x, const cv::Vec3d& y) {
+    return x [0] * y [0] + x [1] * y [1] + x [2] * y [2];
 }
 
-static inline cv::Vec3d
-log_likelihood_interval (
-    const cv::Vec3d& x, const cv::Vec3d& y,
-    double v, double s, double k) {
+static inline double
+dot (const cv::Vec3d& x) {
+    return dot (x, x);
+}
 
+static inline double
+clamp (double x, double lo, double hi) {
+    return x < lo ? lo : (x > hi ? hi: x);
+}
+
+//
+// Gaussian primary membership function with uncertain mean:
+//
+static inline cv::Vec3d
+mfum (const cv::Vec3d& x, const cv::Vec3d& y, double v, double s, double k) {
     BS_ASSERT (v > 0);
     BS_ASSERT (s > 0);
     BS_ASSERT (k > 0);
@@ -122,10 +132,9 @@ fgmm_um_t::operator() (const cv::Mat& frame) {
                 auto& w = g.w;
                 auto& m = g.m;
 
-                const double ll = euclidean_norm (
-                    log_likelihood_interval (cv::Vec3d (src), m, v, s, k_));
+                const double ll = dot (mfum (cv::Vec3d (src), m, v, s, k_));
 
-                if (0 == once && ll < variance_threshold_ * s && 1 == ++once) {
+                if (0 == once && ll < variance_threshold_ * v && 1 == ++once) {
                     if (j < n) {
                         mask_.at< unsigned char > (i) = 0;
                         background_.at< cv::Vec3b > (i) = gs [0].m;
@@ -139,11 +148,7 @@ fgmm_um_t::operator() (const cv::Mat& frame) {
                     m [1] += r * (src [1] - m [1]);
                     m [2] += r * (src [2] - m [2]);
 
-                    v += r * (euclidean_norm ({
-                                src [0] - m [0],
-                                src [1] - m [1],
-                                src [2] - m [2] }) - v);
-
+                    v += r * (dot (cv::Vec3d (src) - cv::Vec3d (m)) - v);
                     s = sqrt (v);
                 }
                 else {

@@ -65,6 +65,7 @@ similarity1 (const Mat& fg, const Mat& bg)
 {
     Mat d = Mat (fg.size (), CV_32F, Scalar (0));
 
+#pragma omp parallel for
     for (size_t i = 0; i < fg.total (); ++i) {
         d.at< float > (i) = h_texture (fg.at< float > (i), bg.at< float > (i));
     }
@@ -89,6 +90,7 @@ choquet_integral (const Mat& H, const Mat& I, const vector< double >& g)
 {
     Mat S (H.size (), CV_32F);
 
+#pragma omp parallel for
     for (size_t i = 0; i < H.total (); ++i) {
         const auto h = H.at< float > (i);
         const auto d = I.at< Vec3f > (i);
@@ -106,6 +108,7 @@ sugeno_integral (const Mat& H, const Mat& I, const vector< double >& g)
 
     Mat S (H.size (), CV_32F);
 
+#pragma omp parallel for
     for (size_t i = 0; i < H.total (); ++i) {
         const auto h = H.at< float > (i);
         const auto d = I.at< Vec3f > (i);
@@ -154,6 +157,7 @@ update_background (const Mat& F, const Mat& B, const Mat& S, float alpha)
     double min_, max_;
     std::tie (min_, max_) = bs::minmax (S);
 
+#pragma omp parallel for
     for (size_t i = 0; i < F.total (); ++i) {
         auto& dst = result.at< Vec3f > (i);
 

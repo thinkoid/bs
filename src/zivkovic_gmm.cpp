@@ -51,6 +51,7 @@ zivkovic_gmm_t::operator() (const cv::Mat& frame) {
         background_ = frame.clone ();
     }
     else {
+#pragma omp parallel for
         for (size_t i = 0; i < frame.total (); ++i) {
             const auto& src = frame.at< cv::Vec3b > (i);
 

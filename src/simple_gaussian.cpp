@@ -22,6 +22,7 @@ simple_gaussian_t::operator() (const cv::Mat& frame) {
         return { a [0] * b [0] + a [1] * b [1] + a [2] * b [2] };
     };
 
+#pragma omp parallel for
     for (size_t i = 0; i < frame.total (); ++i) {
         const auto& src = cv::Vec3f (frame.at< cv::Vec3b > (i)) / 255;
 

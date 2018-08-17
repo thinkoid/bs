@@ -10,6 +10,7 @@ inline cv::Mat
 do_lbp (const cv::Mat& src, T off = { }) {
     auto dst = cv::Mat (src.size (), src.type (), cv::Scalar (0));
 
+#pragma omp parallel for
     for (int i = 1; i < src.rows - 1; ++i) {
         const T* p = src.ptr< T > (i - 1);
         const T* q = src.ptr< T > (i);

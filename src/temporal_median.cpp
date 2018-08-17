@@ -18,6 +18,7 @@ temporal_median_t::calculate_median () const {
     const auto n = history_.size () + 1;
     std::vector< unsigned char > buf (n);
 
+#pragma omp parallel for
     for (size_t i = 0; i < median.total (); ++i) {
         //
         // Extract pixel history from the historic frames:
@@ -57,6 +58,7 @@ temporal_median_t::merge_masks (const cv::Mat& lo_mask, const cv::Mat& hi_mask) 
 
     unsigned char* r = mask.data;
 
+#pragma omp parallel for
     for (size_t i = 1; i < h - 1; ++i) {
         for (size_t j = 1; j < w - 1; ++j) {
 

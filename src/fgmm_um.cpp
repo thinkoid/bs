@@ -8,21 +8,6 @@ using namespace std;
 
 namespace {
 
-static inline double
-dot (const cv::Vec3d& x, const cv::Vec3d& y) {
-    return x [0] * y [0] + x [1] * y [1] + x [2] * y [2];
-}
-
-static inline double
-dot (const cv::Vec3d& x) {
-    return dot (x, x);
-}
-
-static inline double
-clamp (double x, double lo, double hi) {
-    return x < lo ? lo : (x > hi ? hi: x);
-}
-
 //
 // Gaussian primary membership function with uncertain mean:
 //

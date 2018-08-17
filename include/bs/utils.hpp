@@ -25,6 +25,16 @@ scale_frame (cv::Mat& frame, double factor) {
 
 }
 
+inline double
+dot (const cv::Vec3d& x, const cv::Vec3d& y) {
+    return x [0] * y [0] + x [1] * y [1] + x [2] * y [2];
+}
+
+inline double
+dot (const cv::Vec3d& x) {
+    return dot (x, x);
+}
+
 inline cv::Mat
 border (const cv::Mat& src, size_t n = 1) {
     cv::Mat dst;

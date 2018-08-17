@@ -6,16 +6,6 @@ using namespace std;
 
 #include <opencv2/imgproc.hpp>
 
-namespace {
-
-inline double
-euclidean_distance (const cv::Vec3b& x, const cv::Vec3d& y) {
-    const double a = x [0] - y [0], b = x [1] - y [1], c = x [2] - y [2];
-    return a * a + b * b + c * c;
-}
-
-}
-
 namespace bs {
 
 inline grimson_gmm_t::gaussian_t
@@ -78,7 +68,7 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                 auto& w = g.w;
                 auto& m = g.m;
 
-                const auto distance = euclidean_distance (src, m);
+                const auto distance = dot (cv::Vec3d (src) - m);
 
                 if (!once && distance < variance_threshold_ * v && ++once) {
                     if (j < n) {

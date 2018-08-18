@@ -51,7 +51,7 @@ options_t::options_t (int argc, char** argv) {
     ("variance,v", po::value< double > ()->default_value (16.),
      "default variance for new distributions.")
 
-    ("variance-threshold,t", po::value< double > ()->default_value (12.),
+    ("variance-threshold,t", po::value< double > ()->default_value (2.5),
      "variance threshold for matching a distribution.")
 
     ("weight-threshold,w", po::value< double > ()->default_value (.7),

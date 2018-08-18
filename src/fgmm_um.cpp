@@ -118,9 +118,12 @@ fgmm_um_t::operator() (const cv::Mat& frame) {
                 auto& w = g.w;
                 auto& m = g.m;
 
-                const double ll = dot (mfum (cv::Vec3d (src), m, v, s, k_));
+                const double distance = sqrt (
+                    dot (mfum (cv::Vec3d (src), m, v, s, k_)));
 
-                if (0 == once && ll < variance_threshold_ * v && 1 == ++once) {
+                if (0 == once && distance < variance_threshold_ * s &&
+                    1 == ++once) {
+
                     if (j < n) {
                         mask_.at< unsigned char > (i) = 0;
                         background_.at< cv::Vec3b > (i) = gs [0].m;

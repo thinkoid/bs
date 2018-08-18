@@ -9,8 +9,18 @@ using namespace std;
 namespace bs {
 
 inline grimson_gmm_t::gaussian_t
-grimson_gmm_t::default_gaussian (const cv::Vec3b& arg) {
-    return gaussian_t { variance_, 1., 1. / sqrt (variance_), arg };
+grimson_gmm_t::make_gaussian (const cv::Vec3b& src, double v, double s, double a) {
+    return gaussian_t { v, s, a, a / s, cv::Vec3d (src) };
+}
+
+inline grimson_gmm_t::gaussian_t
+grimson_gmm_t::make_gaussian (const cv::Vec3b& src, double v, double a) {
+    return make_gaussian (src, v, sqrt (v), a);
+}
+
+inline grimson_gmm_t::gaussian_t
+grimson_gmm_t::make_gaussian (const cv::Vec3b& src, double v) {
+    return make_gaussian (src, v, sqrt (v), 1.);
 }
 
 /* explicit */
@@ -34,7 +44,9 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
         for (size_t i = 0; i < g_.size (); ++i) {
             auto& g = g_ [i];
             g.reserve (size_);
-            g.resize (1UL, default_gaussian (frame.at< cv::Vec3b > (i)));
+
+            const auto& src = frame.at< cv::Vec3b > (i);
+            g.resize (1UL, make_gaussian (src, variance_));
         }
 
         background_ = frame.clone ();
@@ -47,10 +59,10 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
             auto& gs = g_ [i];
 
             for_each (begin (gs), end (gs), [=](auto& g) {
-                    g.s = g.w / sqrt (g.v); });
+                    g.g = g.w / g.s; });
 
             sort (begin (gs), end (gs), [](const auto& g1, const auto& g2) {
-                    return g1.s > g2.s; });
+                    return g1.g > g2.g; });
 
             size_t n = 0;
 
@@ -65,12 +77,13 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                 auto& g = gs [j];
 
                 auto& v = g.v;
+                auto& s = g.s;
                 auto& w = g.w;
                 auto& m = g.m;
 
-                const auto distance = dot (cv::Vec3d (src) - m);
+                const auto distance = sqrt (dot (cv::Vec3d (src) - m));
 
-                if (!once && distance < variance_threshold_ * v && ++once) {
+                if (!once && distance < variance_threshold_ * s && ++once) {
                     if (j < n) {
                         //
                         // If the distance is close enough to a distribution
@@ -89,6 +102,7 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                     m [2] += r * (src [2] - m [2]);
 
                     v += r * (distance - v);
+                    s = sqrt (v);
                 }
                 else {
                     //
@@ -104,12 +118,10 @@ grimson_gmm_t::operator() (const cv::Mat& frame) {
                 // weakest (least probable):
                 //
                 if (gs.size () < size_) {
-                    gs.emplace_back (gaussian_t {
-                            variance_, alpha_, alpha_ / sqrt (variance_), src });
+                    gs.emplace_back (make_gaussian (src, variance_, alpha_));
                 }
                 else {
-                    gs.back () = gaussian_t {
-                        variance_, alpha_, alpha_ / sqrt (variance_), src };
+                    gs.emplace_back (make_gaussian (src, variance_, alpha_));
                 }
             }
 

@@ -43,12 +43,18 @@ public:
 
 private:
     struct gaussian_t {
-        double v, w, s;
+        double v, s, w, g;
         cv::Vec3d m;
     };
 
     gaussian_t
-    default_gaussian (const cv::Vec3b& = cv::Vec3b ());
+    make_gaussian (const cv::Vec3b&, double);
+
+    gaussian_t
+    make_gaussian (const cv::Vec3b&, double, double);
+
+    gaussian_t
+    make_gaussian (const cv::Vec3b&, double, double, double);
 
 private:
     size_t size_;

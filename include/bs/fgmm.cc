@@ -1,78 +1,11 @@
 #include <bs/utils.hpp>
-#include <bs/fgmm_um.hpp>
-
-#include <numeric>
-using namespace std;
-
-#include <opencv2/imgproc.hpp>
-
-namespace {
-
-//
-// Gaussian primary membership function with uncertain mean:
-//
-static inline cv::Vec3d
-mfum (const cv::Vec3d& x, const cv::Vec3d& y, double v, double s, double k) {
-    BS_ASSERT (v > 0);
-    BS_ASSERT (s > 0);
-    BS_ASSERT (k > 0);
-
-    const cv::Vec3d d = y - x;
-
-    cv::Vec3d z;
-
-    z [0] = (x [0] < y [0] - k * s) || (x [0] > y [0] + k * s)
-        ? 2 * k * d [0] / s
-        : d [0] / (2 * v) + k * d [0] / s + k * k / 2;
-
-    z [1] = (x [1] < y [1] - k * s) || (x [1] > y [1] + k * s)
-        ? 2 * k * d [1] / s
-        : d [1] / (2 * v) + k * d [1] / s + k * k / 2;
-
-    z [2] = (x [2] < y [2] - k * s) || (x [2] > y [2] + k * s)
-        ? 2 * k * d [2] / s
-        : d [2] / (2 * v) + k * d [2] / v + k * k / 2;
-
-    return z;
-}
-
-}
+#include <bs/fgmm.hpp>
 
 namespace bs {
 
-inline fgmm_um_t::gaussian_t
-fgmm_um_t::make_gaussian (const cv::Vec3b& src, double v, double s, double a) {
-    return gaussian_t { v, s, a, a / s, cv::Vec3d (src) };
-}
-
-inline fgmm_um_t::gaussian_t
-fgmm_um_t::make_gaussian (const cv::Vec3b& src, double v, double a) {
-    return make_gaussian (src, v, sqrt (v), a);
-}
-
-inline fgmm_um_t::gaussian_t
-fgmm_um_t::make_gaussian (const cv::Vec3b& src, double v) {
-    return make_gaussian (src, v, sqrt (v), 1.);
-}
-
-/* explicit */
-fgmm_um_t::fgmm_um_t (
-    size_t n,
-    double alpha,
-    double variance,
-    double variance_threshold,
-    double weight_threshold,
-    double k)
-    : size_ (n),
-      alpha_ (alpha),
-      variance_ (variance),
-      variance_threshold_ (variance_threshold),
-      weight_threshold_ (weight_threshold),
-      k_ (k)
-{ }
-
+template< typename T >
 const cv::Mat&
-fgmm_um_t::operator() (const cv::Mat& frame) {
+fgmm_base_t< T >::operator() (const cv::Mat& frame) {
     mask_ = cv::Mat (frame.size (), CV_8U, cv::Scalar (255));
 
     if (g_.empty ()) {
@@ -119,7 +52,7 @@ fgmm_um_t::operator() (const cv::Mat& frame) {
                 auto& m = g.m;
 
                 const double distance = sqrt (
-                    dot (mfum (cv::Vec3d (src), m, v, s, k_)));
+                    dot (f_ (cv::Vec3d (src), m, v, s, k_)));
 
                 if (0 == once && distance < variance_threshold_ * s &&
                     1 == ++once) {
@@ -179,4 +112,4 @@ fgmm_um_t::operator() (const cv::Mat& frame) {
     return mask_;
 }
 
-}
+} // namespace bs

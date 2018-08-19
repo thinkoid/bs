@@ -2,7 +2,7 @@
 
 #include <bs/ewma.hpp>
 #include <bs/frame_range.hpp>
-#include <bs/fgmm_um.hpp>
+#include <bs/fgmm.hpp>
 #include <bs/utils.hpp>
 
 #include <boost/make_shared.hpp>
@@ -97,10 +97,10 @@ program_options_from (int& argc, char** argv) {
 ////////////////////////////////////////////////////////////////////////
 
 static void
-process_fgmm_um (cv::VideoCapture& cap, const options_t& opts) {
+process_fgmm (cv::VideoCapture& cap, const options_t& opts) {
     const bool display = opts.have ("display");
 
-    bs::fgmm_um_t fgmm_um (
+    bs::fgmm_uv_t op (
         opts ["size"].as< size_t > (),
         opts ["alpha"].as< double > (),
         opts ["variance"].as< double > (),
@@ -120,8 +120,8 @@ process_fgmm_um (cv::VideoCapture& cap, const options_t& opts) {
         auto src = bs::resize_frame (frame, 512. / frame.cols);
 
         if (display) {
-            imshow ("Type 2 Fuzzy GMM", fgmm_um (src));
-            imshow ("Type 2 Fuzzy GMM background", fgmm_um.background ());
+            imshow ("Type 2 Fuzzy GMM", op (src));
+            imshow ("Type 2 Fuzzy GMM background", op.background ());
         }
 
         if (temp.wait_for_key (27))
@@ -133,5 +133,5 @@ process_fgmm_um (cv::VideoCapture& cap, const options_t& opts) {
 
 int main (int argc, char** argv) {
     program_options_from (argc, argv);
-    return run_with (process_fgmm_um, global_options ()), 0;
+    return run_with (process_fgmm, global_options ()), 0;
 }

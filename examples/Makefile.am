@@ -6,7 +6,7 @@ include $(top_srcdir)/Makefile.common
 
 bin_PROGRAMS =                                  \
 	adaptive_median                             \
-	fgmm_um                                     \
+	fgmm                                        \
 	fuzzy_choquet                               \
 	fuzzy_sugeno                                \
 	grimson_gmm                                 \
@@ -19,8 +19,8 @@ bin_PROGRAMS =                                  \
 adaptive_median_SOURCES = adaptive_median.cpp options.cpp
 adaptive_median_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
-fgmm_um_SOURCES = fgmm_um.cpp options.cpp
-fgmm_um_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
+fgmm_SOURCES = fgmm.cpp options.cpp
+fgmm_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)
 
 fuzzy_choquet_SOURCES = fuzzy_choquet.cpp options.cpp
 fuzzy_choquet_LDADD = $(top_srcdir)/src/libbs.la $(LIBS)

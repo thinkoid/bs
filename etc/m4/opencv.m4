@@ -147,21 +147,21 @@ AC_LANG_POP([C++])dnl
   if test x"$opencv_cv_inc_path" != xno; then
     AC_DEFINE([HAVE_OPENCV], [1],
       [Defined if the requested minimum OPENCV version is satisfied])
-  
+
     AC_CACHE_CHECK([for Opencv's major version],
       [opencv_cv_major_version],
       [AC_SED_CPP([CV_VERSION_MAJOR],
          [@%:@include <opencv2/core/version.hpp>],
          [opencv_cv_major_version=$ppval],
          [AC_MSG_ERROR([not found])])])
-      
+
     AC_CACHE_CHECK([for Opencv's minor version],
       [opencv_cv_minor_version],
       [AC_SED_CPP([CV_VERSION_MINOR],
          [@%:@include <opencv2/core/version.hpp>],
          [opencv_cv_minor_version=$ppval],
          [AC_MSG_ERROR([not found])])])
-      
+
     opencv_cv_lib_version=${opencv_cv_major_version}_${opencv_cv_minor_version}
   fi
   CPPFLAGS=$opencv_save_CPPFLAGS
@@ -239,7 +239,6 @@ AC_DEFUN([OPENCV_FIND_LIBS],
 [AC_REQUIRE([OPENCV_REQUIRE])dnl
 AC_REQUIRE([_OPENCV_FIND_COMPILER_TAG])dnl
 AC_REQUIRE([OPENCV_STATIC])dnl
-AC_REQUIRE([_OPENCV_GUESS_WHETHER_TO_USE_MT])dnl
 if test x"$opencv_cv_inc_path" = xno; then
   AC_MSG_NOTICE([Opencv not available, not searching for the Opencv $1 library])
 else
@@ -315,7 +314,6 @@ AC_DEFUN([_OPENCV_FIND_LIBS],
   esac
   # If the PREFERRED-RT-OPT are not empty, prepend a `-'.
   test -n "$opencv_rtopt" && opencv_rtopt="-$opencv_rtopt"
-  $opencv_guess_use_mt && opencv_mt=-mt
   # Look for the abs path the static archive.
   # $libext is computed by Libtool but let's make sure it's non empty.
   test -z "$libext" &&
@@ -348,15 +346,15 @@ dnl start the for loops).
 # Don't bother to ident the following nested for loops, only the 2
 # innermost ones matter.
 for opencv_lib_ in $2; do
-for opencv_tag_ in '' -$opencv_cv_lib_tag; do
-for opencv_ver_ in '' -$opencv_cv_lib_version; do
-for opencv_mt_ in '' $opencv_mt -mt; do
-for opencv_rtopt_ in $opencv_rtopt '' -d; do
-  for opencv_lib in \
-    opencv_$opencv_lib_$opencv_tag_$opencv_mt_$opencv_rtopt_$opencv_ver_ \
-    opencv_$opencv_lib_$opencv_tag_$opencv_rtopt_$opencv_ver_ \
-    opencv_$opencv_lib_$opencv_tag_$opencv_mt_$opencv_ver_ \
-    opencv_$opencv_lib_$opencv_tag_$opencv_ver_
+dnl for opencv_tag_ in '' -$opencv_cv_lib_tag; do
+dnl for opencv_ver_ in '' -$opencv_cv_lib_version; do
+dnl for opencv_mt_ in '' $opencv_mt -mt; do
+dnl for opencv_rtopt_ in $opencv_rtopt '' -d; do
+  for opencv_lib in opencv_$opencv_lib_
+    dnl opencv_$opencv_lib_$opencv_tag_$opencv_mt_$opencv_rtopt_$opencv_ver_ \
+    dnl opencv_$opencv_lib_$opencv_tag_$opencv_rtopt_$opencv_ver_ \
+    dnl opencv_$opencv_lib_$opencv_tag_$opencv_mt_$opencv_ver_ \
+    dnl opencv_$opencv_lib_$opencv_tag_$opencv_ver_
   do
     # Avoid testing twice the same lib
     case $opencv_failed_libs in #(
@@ -428,10 +426,10 @@ dnl generated only once above (before we start the for loops).
       fi
     done
   done
-done
-done
-done
-done
+dnl done
+dnl done
+dnl done
+dnl done
 done # opencv_lib_
 rm -f conftest.$ac_objext
 ])
@@ -710,128 +708,110 @@ AC_LANG_POP([C++])dnl
 ])# _OPENCV_PTHREAD_FLAG
 
 
-# _OPENCV_gcc_test(MAJOR, MINOR)
-# -----------------------------
-# Internal helper for _OPENCV_FIND_COMPILER_TAG.
-m4_define([_OPENCV_gcc_test],
-["defined __GNUC__ && __GNUC__ == $1 && __GNUC_MINOR__ == $2 && !defined __ICC @ gcc$1$2"])dnl
+dnl # _OPENCV_gcc_test(MAJOR, MINOR)
+dnl # -----------------------------
+dnl # Internal helper for _OPENCV_FIND_COMPILER_TAG.
+dnl m4_define([_OPENCV_gcc_test],
+dnl ["defined __GNUC__ && __GNUC__ == $1 && __GNUC_MINOR__ == $2 && !defined __ICC @ gcc$1$2"])dnl
 
-# _OPENCV_mingw_test(MAJOR, MINOR)
-# -----------------------------
-# Internal helper for _OPENCV_FIND_COMPILER_TAG.
-m4_define([_OPENCV_mingw_test],
-["defined __GNUC__ && __GNUC__ == $1 && __GNUC_MINOR__ == $2 && !defined __ICC && \
-  (defined WIN32 || defined WINNT || defined _WIN32 || defined __WIN32 \
-         || defined __WIN32__ || defined __WINNT || defined __WINNT__) @ mgw$1$2"])dnl
-
-
-# _OPENCV_FIND_COMPILER_TAG()
-# --------------------------
-# Internal.  When Opencv is installed without --layout=system, each library
-# filename will hold a suffix that encodes the compiler used during the
-# build.  The Opencv build system seems to call this a `tag'.
-AC_DEFUN([_OPENCV_FIND_COMPILER_TAG],
-[AC_REQUIRE([AC_PROG_CXX])dnl
-AC_REQUIRE([AC_CANONICAL_HOST])dnl
-AC_CACHE_CHECK([for the toolset name used by Opencv for $CXX],
-               [opencv_cv_lib_tag],
-[opencv_cv_lib_tag=unknown
-if test x$opencv_cv_inc_path != xno; then
-  AC_LANG_PUSH([C++])dnl
-  # The following tests are mostly inspired by opencv/config/auto_link.hpp
-  # The list is sorted to most recent/common to oldest compiler (in order
-  # to increase the likelihood of finding the right compiler with the
-  # least number of compilation attempt).
-  # Beware that some tests are sensible to the order (for instance, we must
-  # look for MinGW before looking for GCC3).
-  # I used one compilation test per compiler with a #error to recognize
-  # each compiler so that it works even when cross-compiling (let me know
-  # if you know a better approach).
-  # Known missing tags (known from Opencv's tools/build/v2/tools/common.jam):
-  #   como, edg, kcc, bck, mp, sw, tru, xlc
-  # I'm not sure about my test for `il' (be careful: Intel's ICC pre-defines
-  # the same defines as GCC's).
-  for i in \
-    _OPENCV_mingw_test(5, 2) \
-    _OPENCV_gcc_test(5, 2) \
-    _OPENCV_mingw_test(5, 1) \
-    _OPENCV_gcc_test(5, 1) \
-    _OPENCV_mingw_test(5, 0) \
-    _OPENCV_gcc_test(5, 0) \
-    _OPENCV_mingw_test(4, 10) \
-    _OPENCV_gcc_test(4, 10) \
-    _OPENCV_mingw_test(4, 9) \
-    _OPENCV_gcc_test(4, 9) \
-    _OPENCV_mingw_test(4, 8) \
-    _OPENCV_gcc_test(4, 8) \
-    _OPENCV_mingw_test(4, 7) \
-    _OPENCV_gcc_test(4, 7) \
-    _OPENCV_mingw_test(4, 6) \
-    _OPENCV_gcc_test(4, 6) \
-    _OPENCV_mingw_test(4, 5) \
-    _OPENCV_gcc_test(4, 5) \
-    _OPENCV_mingw_test(4, 4) \
-    _OPENCV_gcc_test(4, 4) \
-    _OPENCV_mingw_test(4, 3) \
-    _OPENCV_gcc_test(4, 3) \
-    _OPENCV_mingw_test(4, 2) \
-    _OPENCV_gcc_test(4, 2) \
-    _OPENCV_mingw_test(4, 1) \
-    _OPENCV_gcc_test(4, 1) \
-    _OPENCV_mingw_test(4, 0) \
-    _OPENCV_gcc_test(4, 0) \
-    "defined __GNUC__ && __GNUC__ == 3 && !defined __ICC \
-     && (defined WIN32 || defined WINNT || defined _WIN32 || defined __WIN32 \
-         || defined __WIN32__ || defined __WINNT || defined __WINNT__) @ mgw" \
-    _OPENCV_gcc_test(3, 4) \
-    _OPENCV_gcc_test(3, 3) \
-    "defined _MSC_VER && _MSC_VER >= 1500 @ vc90" \
-    "defined _MSC_VER && _MSC_VER == 1400 @ vc80" \
-    _OPENCV_gcc_test(3, 2) \
-    "defined _MSC_VER && _MSC_VER == 1310 @ vc71" \
-    _OPENCV_gcc_test(3, 1) \
-    _OPENCV_gcc_test(3, 0) \
-    "defined __BORLANDC__ @ bcb" \
-    "defined __ICC && (defined __unix || defined __unix__) @ il" \
-    "defined __ICL @ iw" \
-    "defined _MSC_VER && _MSC_VER == 1300 @ vc7" \
-    _OPENCV_gcc_test(2, 95) \
-    "defined __MWERKS__ && __MWERKS__ <= 0x32FF @ cw9" \
-    "defined _MSC_VER && _MSC_VER < 1300 && !defined UNDER_CE @ vc6" \
-    "defined _MSC_VER && _MSC_VER < 1300 && defined UNDER_CE @ evc4" \
-    "defined __MWERKS__ && __MWERKS__ <= 0x31FF @ cw8"
-  do
-    opencv_tag_test=`expr "X$i" : 'X\([[^@]]*\) @ '`
-    opencv_tag=`expr "X$i" : 'X[[^@]]* @ \(.*\)'`
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#if $opencv_tag_test
-/* OK */
-#else
-# error $opencv_tag_test
-#endif
-]])], [opencv_cv_lib_tag=$opencv_tag; break], [])
-  done
-AC_LANG_POP([C++])dnl
-fi])dnl end of AC_CACHE_CHECK
-])# _OPENCV_FIND_COMPILER_TAG
+dnl # _OPENCV_mingw_test(MAJOR, MINOR)
+dnl # -----------------------------
+dnl # Internal helper for _OPENCV_FIND_COMPILER_TAG.
+dnl m4_define([_OPENCV_mingw_test],
+dnl ["defined __GNUC__ && __GNUC__ == $1 && __GNUC_MINOR__ == $2 && !defined __ICC && \
+dnl   (defined WIN32 || defined WINNT || defined _WIN32 || defined __WIN32 \
+dnl          || defined __WIN32__ || defined __WINNT || defined __WINNT__) @ mgw$1$2"])dnl
 
 
-# _OPENCV_GUESS_WHETHER_TO_USE_MT()
-# --------------------------------
-# Compile a small test to try to guess whether we should favor MT (Multi
-# Thread) flavors of Opencv.  Sets opencv_guess_use_mt accordingly.
-AC_DEFUN([_OPENCV_GUESS_WHETHER_TO_USE_MT],
-[# Check whether we do better use `mt' even though we weren't ask to.
-AC_LANG_PUSH([C++])dnl
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#if defined _REENTRANT || defined _MT || defined __MT__
-/* use -mt */
-#else
-# error MT not needed
-#endif
-]])], [opencv_guess_use_mt=:], [opencv_guess_use_mt=false])
-AC_LANG_POP([C++])dnl
-])
+dnl # _OPENCV_FIND_COMPILER_TAG()
+dnl # --------------------------
+dnl # Internal.  When Opencv is installed without --layout=system, each library
+dnl # filename will hold a suffix that encodes the compiler used during the
+dnl # build.  The Opencv build system seems to call this a `tag'.
+dnl AC_DEFUN([_OPENCV_FIND_COMPILER_TAG],
+dnl [AC_REQUIRE([AC_PROG_CXX])dnl
+dnl AC_REQUIRE([AC_CANONICAL_HOST])dnl
+dnl AC_CACHE_CHECK([for the toolset name used by Opencv for $CXX],
+dnl                [opencv_cv_lib_tag],
+dnl [opencv_cv_lib_tag=unknown
+dnl if test x$opencv_cv_inc_path != xno; then
+dnl   AC_LANG_PUSH([C++])dnl
+dnl   # The following tests are mostly inspired by opencv/config/auto_link.hpp
+dnl   # The list is sorted to most recent/common to oldest compiler (in order
+dnl   # to increase the likelihood of finding the right compiler with the
+dnl   # least number of compilation attempt).
+dnl   # Beware that some tests are sensible to the order (for instance, we must
+dnl   # look for MinGW before looking for GCC3).
+dnl   # I used one compilation test per compiler with a #error to recognize
+dnl   # each compiler so that it works even when cross-compiling (let me know
+dnl   # if you know a better approach).
+dnl   # Known missing tags (known from Opencv's tools/build/v2/tools/common.jam):
+dnl   #   como, edg, kcc, bck, mp, sw, tru, xlc
+dnl   # I'm not sure about my test for `il' (be careful: Intel's ICC pre-defines
+dnl   # the same defines as GCC's).
+dnl   for i in \
+dnl     _OPENCV_mingw_test(5, 2) \
+dnl     _OPENCV_gcc_test(5, 2) \
+dnl     _OPENCV_mingw_test(5, 1) \
+dnl     _OPENCV_gcc_test(5, 1) \
+dnl     _OPENCV_mingw_test(5, 0) \
+dnl     _OPENCV_gcc_test(5, 0) \
+dnl     _OPENCV_mingw_test(4, 10) \
+dnl     _OPENCV_gcc_test(4, 10) \
+dnl     _OPENCV_mingw_test(4, 9) \
+dnl     _OPENCV_gcc_test(4, 9) \
+dnl     _OPENCV_mingw_test(4, 8) \
+dnl     _OPENCV_gcc_test(4, 8) \
+dnl     _OPENCV_mingw_test(4, 7) \
+dnl     _OPENCV_gcc_test(4, 7) \
+dnl     _OPENCV_mingw_test(4, 6) \
+dnl     _OPENCV_gcc_test(4, 6) \
+dnl     _OPENCV_mingw_test(4, 5) \
+dnl     _OPENCV_gcc_test(4, 5) \
+dnl     _OPENCV_mingw_test(4, 4) \
+dnl     _OPENCV_gcc_test(4, 4) \
+dnl     _OPENCV_mingw_test(4, 3) \
+dnl     _OPENCV_gcc_test(4, 3) \
+dnl     _OPENCV_mingw_test(4, 2) \
+dnl     _OPENCV_gcc_test(4, 2) \
+dnl     _OPENCV_mingw_test(4, 1) \
+dnl     _OPENCV_gcc_test(4, 1) \
+dnl     _OPENCV_mingw_test(4, 0) \
+dnl     _OPENCV_gcc_test(4, 0) \
+dnl     "defined __GNUC__ && __GNUC__ == 3 && !defined __ICC \
+dnl      && (defined WIN32 || defined WINNT || defined _WIN32 || defined __WIN32 \
+dnl          || defined __WIN32__ || defined __WINNT || defined __WINNT__) @ mgw" \
+dnl     _OPENCV_gcc_test(3, 4) \
+dnl     _OPENCV_gcc_test(3, 3) \
+dnl     "defined _MSC_VER && _MSC_VER >= 1500 @ vc90" \
+dnl     "defined _MSC_VER && _MSC_VER == 1400 @ vc80" \
+dnl     _OPENCV_gcc_test(3, 2) \
+dnl     "defined _MSC_VER && _MSC_VER == 1310 @ vc71" \
+dnl     _OPENCV_gcc_test(3, 1) \
+dnl     _OPENCV_gcc_test(3, 0) \
+dnl     "defined __BORLANDC__ @ bcb" \
+dnl     "defined __ICC && (defined __unix || defined __unix__) @ il" \
+dnl     "defined __ICL @ iw" \
+dnl     "defined _MSC_VER && _MSC_VER == 1300 @ vc7" \
+dnl     _OPENCV_gcc_test(2, 95) \
+dnl     "defined __MWERKS__ && __MWERKS__ <= 0x32FF @ cw9" \
+dnl     "defined _MSC_VER && _MSC_VER < 1300 && !defined UNDER_CE @ vc6" \
+dnl     "defined _MSC_VER && _MSC_VER < 1300 && defined UNDER_CE @ evc4" \
+dnl     "defined __MWERKS__ && __MWERKS__ <= 0x31FF @ cw8"
+dnl   do
+dnl     opencv_tag_test=`expr "X$i" : 'X\([[^@]]*\) @ '`
+dnl     opencv_tag=`expr "X$i" : 'X[[^@]]* @ \(.*\)'`
+dnl     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+dnl #if $opencv_tag_test
+dnl /* OK */
+dnl #else
+dnl # error $opencv_tag_test
+dnl #endif
+dnl ]])], [opencv_cv_lib_tag=$opencv_tag; break], [])
+dnl   done
+dnl AC_LANG_POP([C++])dnl
+dnl fi])dnl end of AC_CACHE_CHECK
+dnl ])# _OPENCV_FIND_COMPILER_TAG
 
 # _OPENCV_AC_LINK_IFELSE(PROGRAM, [ACTION-IF-TRUE], [ACTION-IF-FALSE])
 # -------------------------------------------------------------------

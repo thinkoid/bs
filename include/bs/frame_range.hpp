@@ -6,6 +6,7 @@
 
 #include <boost/iterator/iterator_facade.hpp>
 
+#include <range/v3/utility.hpp>
 #include <range/v3/iterator_range.hpp>
 
 namespace bs {

@@ -12,7 +12,7 @@ dnl
 dnl Only one needed if the package tree has a normal structure
 dnl
 AC_ARG_WITH([range3],
-    [AC_HELP_STRING([--with-range3],[Boost range v3 installation directory])],
+    [AS_HELP_STRING([--with-range3],[Boost range v3 installation directory])],
     [ac_path_Var=${withval}],
     [])
 
@@ -20,7 +20,7 @@ dnl
 dnl Override the include directory
 dnl
 AC_ARG_WITH([range3-incdir],
-    [AC_HELP_STRING([--with-range3-incdir],[range3 include directory])],
+    [AS_HELP_STRING([--with-range3-incdir],[range3 include directory])],
     [ac_incdir_Var=${withval}],
     [])
 

@@ -15,7 +15,7 @@ dnl
 dnl Only one needed if the package tree has a normal structure
 dnl
 AC_ARG_WITH([$1],
-    [AC_HELP_STRING([--with-$1],[$1 installation directory])],
+    [AS_HELP_STRING([--with-$1],[$1 installation directory])],
     [ac_path_Var=${withval}],
     [])
 
@@ -23,7 +23,7 @@ dnl
 dnl Override the include directory
 dnl
 AC_ARG_WITH([$1-incdir],
-    [AC_HELP_STRING([--with-$1-incdir],[$1 include directory])],
+    [AS_HELP_STRING([--with-$1-incdir],[$1 include directory])],
     [ac_incdir_Var=${withval}],
     [])
 
@@ -31,7 +31,7 @@ dnl
 dnl Override the library directory
 dnl
 AC_ARG_WITH([$1-libdir],
-    [AC_HELP_STRING([--with-$1-libdir],[$1 library directory])],
+    [AS_HELP_STRING([--with-$1-libdir],[$1 library directory])],
     [ac_libdir_Var=${withval}],
     [])
 
@@ -39,7 +39,7 @@ dnl
 dnl Override the libs
 dnl
 AC_ARG_WITH([$1-libs],
-    [AC_HELP_STRING([--with-$1-libs],[$1 libraries])],
+    [AS_HELP_STRING([--with-$1-libs],[$1 libraries])],
     [ac_libs_Var=${withval}],
     [])
 

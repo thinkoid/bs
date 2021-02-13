@@ -1,6 +1,6 @@
 # -*- mode: autoconf -*-
 
-AC_INIT([bs],[0.0.1],)
+AC_INIT([bs],[0.0.1],[])
 
 AC_CONFIG_MACRO_DIR([etc/m4])
 AC_CONFIG_AUX_DIR([etc/m4])
@@ -15,7 +15,7 @@ AC_CONFIG_CXX_WARNINGS
 AC_ENABLE_CXX_DIALECT([c++1z])
 AC_ENABLE_OPENMP
 
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_MAKE_SET(gmake)
 AM_PROG_AS
 
@@ -40,5 +40,5 @@ AC_CONFIG_FILES(src/Makefile)
 AC_CONFIG_FILES(examples/Makefile)
 AC_CONFIG_FILES(tests/Makefile)
 
-AC_OUTPUT()
+AC_OUTPUT
 

@@ -1,5 +1,7 @@
 # Background Subtraction
 
+[![Join the chat at https://gitter.im/thinkoid-bs/community](https://badges.gitter.im/thinkoid-bs/community.svg)](https://gitter.im/thinkoid-bs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A collection of background subtraction algorithms, implemented on top of Boost
 and OpenCV. See the [COPYING](COPYING) for license rights and limitations (BSD).
 
